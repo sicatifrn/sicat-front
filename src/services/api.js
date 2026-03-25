@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const API_BASE_URL = 'http://sicat.fluxomed.com'
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'https://sicat.fluxomed.com'
 const SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
 
 const api = axios.create({
