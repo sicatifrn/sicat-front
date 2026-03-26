@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 rounded-3xl border border-gray-100 bg-gray-100">
+  <div class="rounded-3xl border border-gray-100 bg-gray-100 overflow-hidden">
     <div v-if="loading" class="text-center py-12">
       <ion-icon name="hourglass-outline" class="text-4xl text-purple-600 animate-spin"></ion-icon>
       <p class="text-gray-600 mt-4">{{ loadingText || 'Carregando...' }}</p>
@@ -11,7 +11,7 @@
       <slot name="empty-action"></slot>
     </div>
 
-    <div v-else class="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
+    <div v-else class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
