@@ -16,6 +16,12 @@ export const routes = [
     meta: { requiresAuth: false }
   },
   {
+    path: '/recuperar-senha',
+    name: 'RecuperarSenha',
+    component: () => import('../views/RecuperarSenha.vue'),
+    meta: { requiresAuth: false }
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('../views/Dashboard.vue'),

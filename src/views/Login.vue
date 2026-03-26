@@ -39,6 +39,13 @@
             </button>
           </div>
         </div>
+        <div
+          v-if="showRecoveryMessage"
+          class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200"
+        >
+          <p class="text-green-700 text-sm font-semibold">Senha atualizada com sucesso.</p>
+          <p class="text-green-600 text-xs">Agora entre com sua nova senha.</p>
+        </div>
 
         <form @submit.prevent="handleLogin" class="space-y-5">
           <Input
@@ -81,6 +88,11 @@
               Entrar
             </Button>
           </div>
+          <div class="text-center">
+            <router-link to="/recuperar-senha" class="text-sm text-purple-700 hover:text-purple-800 font-medium">
+              Esqueci minha senha
+            </router-link>
+          </div>
         </form>
       </Card>
       </div>
@@ -108,11 +120,19 @@ const errors = ref({})
 const error = ref('')
 const loading = ref(false)
 const showSuccessMessage = ref(false)
+const showRecoveryMessage = ref(false)
 
 const checkSuccessMessage = () => {
   const registro = route.query.registro
+  const recuperacao = route.query.recuperacao
   if (registro === 'sucesso' || registro === 'true') {
     showSuccessMessage.value = true
+    setTimeout(() => {
+      router.replace({ query: {} })
+    }, 200)
+  }
+  if (recuperacao === 'sucesso' || recuperacao === 'true') {
+    showRecoveryMessage.value = true
     setTimeout(() => {
       router.replace({ query: {} })
     }, 200)
@@ -126,6 +146,15 @@ onMounted(() => {
 watch(() => route.query.registro, (newVal) => {
   if (newVal === 'sucesso' || newVal === 'true') {
     showSuccessMessage.value = true
+    setTimeout(() => {
+      router.replace({ query: {} })
+    }, 200)
+  }
+}, { immediate: true })
+
+watch(() => route.query.recuperacao, (newVal) => {
+  if (newVal === 'sucesso' || newVal === 'true') {
+    showRecoveryMessage.value = true
     setTimeout(() => {
       router.replace({ query: {} })
     }, 200)
@@ -158,6 +187,7 @@ const handleLogin = async () => {
       const userData = await authAPI.getMe()
       localStorage.setItem('user_nome', userData.nome_completo || '')
       localStorage.setItem('user_role', userData.tipo || response.tipo || '')
+      localStorage.setItem('user_id', userData.id || '')
     } catch (e) {
     }
     

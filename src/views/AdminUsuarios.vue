@@ -31,9 +31,10 @@
         <select
           :value="item.tipo"
           @change="alterarTipoUsuario(item.id, $event.target.value)"
+          :disabled="item.id === currentUserId"
           class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent hover:border-purple-400 transition-colors"
         >
-          <option value="usuario">Usuário</option>
+          <option value="default">Usuário</option>
           <option value="bibliotecario">Bibliotecário</option>
           <option value="admin">Admin</option>
         </select>
@@ -49,6 +50,7 @@ import api from '../services/api'
 
 const usuarios = ref([])
 const loading = ref(false)
+const currentUserId = ref(localStorage.getItem('user_id') || '')
 
 const columns = [
   { key: 'nome_completo', label: 'Nome' },
@@ -71,6 +73,11 @@ const carregarUsuarios = async () => {
 }
 
 const alterarTipoUsuario = async (usuarioId, novoTipo) => {
+  if (usuarioId === currentUserId.value) {
+    alert('Você não pode alterar seu próprio tipo de usuário.')
+    return
+  }
+
   try {
     await api.patch(`/api/admin/usuarios/${usuarioId}/tipo`, {
       tipo: novoTipo

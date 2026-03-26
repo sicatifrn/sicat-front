@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
             <ion-icon name="add-circle-outline" class="text-purple-600"></ion-icon>
@@ -13,10 +13,10 @@
           type="button"
           variant="outline"
           @click="preencherDadosAleatorios"
-          class="flex items-center gap-2"
+          class="flex items-center gap-2 w-full sm:w-auto justify-center"
         >
           <ion-icon name="shuffle-outline"></ion-icon>
-          Preencher com Dados Aleatórios
+          <span class="sm:inline">Preencher com Dados Aleatórios</span>
         </Button>
       </div>
     </div>

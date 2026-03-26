@@ -8,6 +8,12 @@
       empty-text="Nenhuma ficha encontrada"
       empty-icon="document-text-outline"
     >
+      <template #cell-biblioteca="{ item }">
+        <span class="text-sm text-gray-700">
+          {{ item.biblioteca_nome || '-' }}
+        </span>
+      </template>
+
       <template #cell-status="{ item }">
         <span :class="[
           'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full',
@@ -35,14 +41,29 @@ const columns = [
   { key: 'titulo', label: 'Título' },
   { key: 'id_curto', label: 'ID' },
   { key: 'autor_nome_completo', label: 'Autor' },
+  { key: 'biblioteca', label: 'Biblioteca' },
   { key: 'status', label: 'Status' }
 ]
 
 const carregarFichas = async () => {
   loading.value = true
   try {
-    const response = await api.get('/api/admin/fichas')
-    fichas.value = response.data
+    const [fichasResp, bibliotecasResp] = await Promise.all([
+      api.get('/api/admin/fichas'),
+      api.get('/api/public/bibliotecas')
+    ])
+
+    const bibliotecasMap = new Map(
+      (bibliotecasResp.data || []).map((biblioteca) => [
+        biblioteca.id,
+        `${biblioteca.nome} - ${biblioteca.campus}`
+      ])
+    )
+
+    fichas.value = (fichasResp.data || []).map((ficha) => ({
+      ...ficha,
+      biblioteca_nome: bibliotecasMap.get(ficha.biblioteca_id) || '-'
+    }))
   } catch (error) {
   } finally {
     loading.value = false

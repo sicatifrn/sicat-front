@@ -42,6 +42,7 @@ api.interceptors.response.use(
       localStorage.removeItem('refresh_token')
       localStorage.removeItem('user_role')
       localStorage.removeItem('user_nome')
+      localStorage.removeItem('user_id')
       window.dispatchEvent(new Event('auth-changed'))
       window.location.href = '/login'
     }
@@ -88,6 +89,16 @@ export const authAPI = {
   
   register: async (matricula, senha_suap, nova_senha, confirmar_senha) => {
     const response = await api.post('/api/auth/registro', {
+      matricula,
+      senha_suap,
+      nova_senha,
+      confirmar_senha
+    })
+    return response.data
+  },
+
+  recuperarAcesso: async (matricula, senha_suap, nova_senha, confirmar_senha) => {
+    const response = await api.post('/api/auth/recuperar-acesso', {
       matricula,
       senha_suap,
       nova_senha,

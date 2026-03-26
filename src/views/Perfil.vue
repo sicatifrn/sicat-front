@@ -138,6 +138,7 @@ const confirmLogout = () => {
   localStorage.removeItem('refresh_token')
   localStorage.removeItem('user_role')
   localStorage.removeItem('user_nome')
+  localStorage.removeItem('user_id')
   window.dispatchEvent(new Event('auth-changed'))
   router.push('/login')
 }

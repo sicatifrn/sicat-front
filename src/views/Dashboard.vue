@@ -11,7 +11,7 @@
       </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
       <Card>
         <div class="flex items-center justify-between">
           <div>
@@ -37,6 +37,15 @@
             <p class="text-3xl font-bold text-green-600">{{ stats.aprovadas }}</p>
           </div>
           <ion-icon name="checkmark-circle-outline" class="text-4xl text-green-600"></ion-icon>
+        </div>
+      </Card>
+      <Card>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-600 text-sm mb-1">Reprovadas</p>
+            <p class="text-3xl font-bold text-red-600">{{ stats.reprovadas }}</p>
+          </div>
+          <ion-icon name="close-circle-outline" class="text-4xl text-red-600"></ion-icon>
         </div>
       </Card>
     </div>
@@ -69,7 +78,8 @@ const user = ref(null)
 const stats = ref({
   totalFichas: 0,
   pendentes: 0,
-  aprovadas: 0
+  aprovadas: 0,
+  reprovadas: 0
 })
 const loading = ref(true)
 
@@ -89,7 +99,8 @@ const carregarDados = async () => {
       stats.value = {
         totalFichas: fichas.length,
         pendentes: fichas.filter(f => f.status === 'aguardando_autorizacao').length,
-        aprovadas: fichas.filter(f => f.status === 'aprovado').length
+        aprovadas: fichas.filter(f => f.status === 'aprovado').length,
+        reprovadas: fichas.filter(f => f.status === 'negado').length
       }
     } catch (error) {
     }

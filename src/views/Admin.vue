@@ -8,15 +8,15 @@
       <p class="text-gray-600">Painel de administração do sistema</p>
     </div>
 
-    <div class="border-b border-gray-200 mb-6">
-      <nav class="flex space-x-8">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px,1fr] gap-6 items-start">
+      <nav class="bg-white border border-gray-200 rounded-xl p-3 space-y-2 lg:sticky lg:top-6">
         <button
           @click="handleTabChange('usuarios')"
           :class="[
-            'py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center',
+            'w-full px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center',
             activeTab === 'usuarios'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'bg-purple-100 text-purple-700'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
           ]"
         >
           <ion-icon name="people-outline" class="text-base mr-2"></ion-icon>
@@ -25,10 +25,10 @@
         <button
           @click="handleTabChange('fichas')"
           :class="[
-            'py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center',
+            'w-full px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center',
             activeTab === 'fichas'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'bg-purple-100 text-purple-700'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
           ]"
         >
           <ion-icon name="document-text-outline" class="text-base mr-2"></ion-icon>
@@ -37,34 +37,32 @@
         <button
           @click="handleTabChange('bibliotecas')"
           :class="[
-            'py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center',
+            'w-full px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center',
             activeTab === 'bibliotecas'
-              ? 'border-purple-600 text-purple-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'bg-purple-100 text-purple-700'
+              : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
           ]"
         >
           <ion-icon name="library-outline" class="text-base mr-2"></ion-icon>
           Bibliotecas
         </button>
       </nav>
+
+      <AdminUsuarios v-if="activeTab === 'usuarios'" />
+
+      <AdminFichas v-else-if="activeTab === 'fichas'" />
+
+      <AdminBibliotecas v-else-if="activeTab === 'bibliotecas'" />
     </div>
-
-    <AdminUsuarios v-if="activeTab === 'usuarios'" />
-
-    <AdminFichas v-else-if="activeTab === 'fichas'" />
-
-    <AdminBibliotecas v-else-if="activeTab === 'bibliotecas'" />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import AdminUsuarios from './AdminUsuarios.vue'
 import AdminFichas from './AdminFichas.vue'
 import AdminBibliotecas from './AdminBibliotecas.vue'
 
-const router = useRouter()
 const activeTab = ref('usuarios')
 
 const handleTabChange = (tab) => {
