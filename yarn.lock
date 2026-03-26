@@ -848,6 +848,11 @@ vue-router@^5.0.3:
     unplugin-utils "^0.3.1"
     yaml "^2.8.2"
 
+vue-sonner@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.npmjs.org/vue-sonner/-/vue-sonner-2.0.9.tgz"
+  integrity sha512-i6BokNlNDL93fpzNxN/LZSn6D6MzlO+i3qXt6iVZne3x1k7R46d5HlFB4P8tYydhgqOrRbIZEsnRd3kG7qGXyw==
+
 vue@^3.5.30:
   version "3.5.30"
   resolved "https://registry.npmjs.org/vue/-/vue-3.5.30.tgz"

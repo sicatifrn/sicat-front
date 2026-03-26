@@ -17,36 +17,6 @@
         </div>
 
         <Card>
-        <div
-          v-if="showSuccessMessage"
-          class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200"
-        >
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0">
-              <ion-icon name="checkmark-circle" class="text-xl text-green-600"></ion-icon>
-            </div>
-            <div class="flex-1">
-              <h3 class="text-green-700 font-semibold mb-1 text-sm">Conta criada com sucesso!</h3>
-              <p class="text-green-600 text-xs">
-                Sua conta foi criada com sucesso. Agora você pode fazer login para acessar o sistema.
-              </p>
-            </div>
-            <button
-              @click="showSuccessMessage = false"
-              class="flex-shrink-0 text-green-600 hover:text-green-700 transition-colors"
-            >
-              <ion-icon name="close-outline" class="text-lg"></ion-icon>
-            </button>
-          </div>
-        </div>
-        <div
-          v-if="showRecoveryMessage"
-          class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200"
-        >
-          <p class="text-green-700 text-sm font-semibold">Senha atualizada com sucesso.</p>
-          <p class="text-green-600 text-xs">Agora entre com sua nova senha.</p>
-        </div>
-
         <form @submit.prevent="handleLogin" class="space-y-5">
           <Input
             id="matricula"
@@ -107,6 +77,7 @@ import { authAPI } from '../services/api'
 import Card from '../components/UI/Card.vue'
 import Input from '../components/UI/Input.vue'
 import Button from '../components/UI/Button.vue'
+import { notifySuccess } from '../services/toast'
 
 const router = useRouter()
 const route = useRoute()
@@ -119,20 +90,17 @@ const form = ref({
 const errors = ref({})
 const error = ref('')
 const loading = ref(false)
-const showSuccessMessage = ref(false)
-const showRecoveryMessage = ref(false)
-
 const checkSuccessMessage = () => {
   const registro = route.query.registro
   const recuperacao = route.query.recuperacao
   if (registro === 'sucesso' || registro === 'true') {
-    showSuccessMessage.value = true
+    notifySuccess('Conta criada com sucesso! Agora você pode entrar no sistema.')
     setTimeout(() => {
       router.replace({ query: {} })
     }, 200)
   }
   if (recuperacao === 'sucesso' || recuperacao === 'true') {
-    showRecoveryMessage.value = true
+    notifySuccess('Senha atualizada com sucesso. Agora entre com sua nova senha.')
     setTimeout(() => {
       router.replace({ query: {} })
     }, 200)
@@ -145,7 +113,7 @@ onMounted(() => {
 
 watch(() => route.query.registro, (newVal) => {
   if (newVal === 'sucesso' || newVal === 'true') {
-    showSuccessMessage.value = true
+    notifySuccess('Conta criada com sucesso! Agora você pode entrar no sistema.')
     setTimeout(() => {
       router.replace({ query: {} })
     }, 200)
@@ -154,7 +122,7 @@ watch(() => route.query.registro, (newVal) => {
 
 watch(() => route.query.recuperacao, (newVal) => {
   if (newVal === 'sucesso' || newVal === 'true') {
-    showRecoveryMessage.value = true
+    notifySuccess('Senha atualizada com sucesso. Agora entre com sua nova senha.')
     setTimeout(() => {
       router.replace({ query: {} })
     }, 200)

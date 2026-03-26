@@ -279,6 +279,7 @@ import Button from '../components/UI/Button.vue'
 import Input from '../components/UI/Input.vue'
 import Modal from '../components/UI/Modal.vue'
 import api from '../services/api'
+import { notifyError, notifySuccess } from '../services/toast'
 
 const bibliotecas = ref([])
 const loading = ref(false)
@@ -333,7 +334,7 @@ const criarBiblioteca = async () => {
     novaBiblioteca.value = { nome: '', campus: '' }
     await carregarBibliotecas()
   } catch (error) {
-    alert('Erro ao criar biblioteca. Tente novamente.')
+    notifyError('Erro ao criar biblioteca. Tente novamente.')
   } finally {
     criandoBiblioteca.value = false
   }
@@ -350,7 +351,7 @@ const abrirModalAdicionarBibliotecario = async (biblioteca) => {
     const response = await api.get('/api/admin/usuarios')
     usuariosDisponiveis.value = response.data
   } catch (error) {
-    alert('Erro ao carregar usuários. Tente novamente.')
+    notifyError('Erro ao carregar usuários. Tente novamente.')
   } finally {
     loadingUsuariosParaAdicionar.value = false
   }
@@ -373,14 +374,14 @@ const adicionarBibliotecario = async () => {
     bibliotecaSelecionada.value = null
     usuarioSelecionado.value = ''
     
-    alert('Bibliotecário adicionado com sucesso! O tipo do usuário foi alterado para "Bibliotecário".')
+    notifySuccess('Bibliotecário adicionado com sucesso! O tipo do usuário foi alterado para "Bibliotecário".')
     
     if (bibliotecaParaBibliotecarios.value && bibliotecaParaBibliotecarios.value.id === bibliotecaId) {
       await verBibliotecarios(bibliotecaParaBibliotecarios.value)
     }
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao adicionar bibliotecário. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
   } finally {
     adicionandoBibliotecario.value = false
   }
@@ -409,10 +410,10 @@ const salvarEdicao = async () => {
     showEditar.value = false
     bibliotecaParaEditar.value = null
     await carregarBibliotecas()
-    alert('Biblioteca atualizada com sucesso!')
+    notifySuccess('Biblioteca atualizada com sucesso!')
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao editar biblioteca. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
   } finally {
     editandoBiblioteca.value = false
   }
@@ -427,7 +428,7 @@ const verBibliotecarios = async (biblioteca) => {
     const response = await api.get(`/api/admin/bibliotecas/${biblioteca.id}/bibliotecarios`)
     bibliotecariosDaBiblioteca.value = response.data
   } catch (error) {
-    alert('Erro ao carregar bibliotecários. Tente novamente.')
+    notifyError('Erro ao carregar bibliotecários. Tente novamente.')
   } finally {
     loadingBibliotecarios.value = false
   }
@@ -441,10 +442,10 @@ const removerBibliotecario = async (usuarioId) => {
   try {
     await api.delete(`/api/admin/bibliotecas/${bibliotecaParaBibliotecarios.value.id}/bibliotecarios/${usuarioId}`)
     await verBibliotecarios(bibliotecaParaBibliotecarios.value)
-    alert('Bibliotecário removido com sucesso!')
+    notifySuccess('Bibliotecário removido com sucesso!')
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao remover bibliotecário. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
   }
 }
 
@@ -462,10 +463,10 @@ const deletarBiblioteca = async () => {
     showConfirmarDeletar.value = false
     bibliotecaParaDeletar.value = null
     await carregarBibliotecas()
-    alert('Biblioteca deletada com sucesso!')
+    notifySuccess('Biblioteca deletada com sucesso!')
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao deletar biblioteca. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
   } finally {
     deletandoBiblioteca.value = false
   }

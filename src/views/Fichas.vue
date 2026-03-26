@@ -88,6 +88,7 @@ import { useRouter } from 'vue-router'
 import Card from '../components/UI/Card.vue'
 import Button from '../components/UI/Button.vue'
 import api from '../services/api'
+import { notifyError } from '../services/toast'
 
 const router = useRouter()
 const fichas = ref([])
@@ -129,7 +130,7 @@ const carregarFichas = async () => {
     if (error.response?.status === 401) {
       router.push('/login')
     } else {
-      alert('Erro ao carregar fichas. Tente novamente.')
+      notifyError('Erro ao carregar fichas. Tente novamente.')
     }
   } finally {
     loading.value = false
@@ -151,7 +152,7 @@ const downloadFicha = async (id) => {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
   } catch (error) {
-    alert('Erro ao baixar ficha. Tente novamente.')
+    notifyError('Erro ao baixar ficha. Tente novamente.')
   }
 }
 

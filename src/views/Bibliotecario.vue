@@ -274,6 +274,7 @@ import Button from '../components/UI/Button.vue'
 import Modal from '../components/UI/Modal.vue'
 import Card from '../components/UI/Card.vue'
 import api from '../services/api'
+import { notifyError, notifySuccess } from '../services/toast'
 
 const router = useRouter()
 
@@ -310,7 +311,7 @@ const carregarSolicitacoes = async () => {
     const response = await api.get('/api/bibliotecarios/solicitacoes')
     solicitacoes.value = response.data
   } catch (error) {
-    alert('Erro ao carregar solicitações. Tente novamente.')
+    notifyError('Erro ao carregar solicitações. Tente novamente.')
   } finally {
     loading.value = false
   }
@@ -389,10 +390,10 @@ const aprovarNegarModal = async (aprovado) => {
       solicitacaoSelecionada.value = response.data.ficha
     }
     
-    alert(aprovado ? 'Ficha aprovada com sucesso!' : 'Ficha negada com sucesso!')
+    notifySuccess(aprovado ? 'Ficha aprovada com sucesso!' : 'Ficha negada com sucesso!')
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao processar solicitação. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
   } finally {
     processando.value = false
   }

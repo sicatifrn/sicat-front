@@ -47,6 +47,7 @@
 import { ref, onMounted } from 'vue'
 import Table from '../components/UI/Table.vue'
 import api from '../services/api'
+import { notifyError, notifyInfo } from '../services/toast'
 
 const usuarios = ref([])
 const loading = ref(false)
@@ -74,7 +75,7 @@ const carregarUsuarios = async () => {
 
 const alterarTipoUsuario = async (usuarioId, novoTipo) => {
   if (usuarioId === currentUserId.value) {
-    alert('Você não pode alterar seu próprio tipo de usuário.')
+    notifyInfo('Você não pode alterar seu próprio tipo de usuário.')
     return
   }
 
@@ -85,7 +86,7 @@ const alterarTipoUsuario = async (usuarioId, novoTipo) => {
     await carregarUsuarios()
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao alterar tipo de usuário. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
     await carregarUsuarios()
   }
 }

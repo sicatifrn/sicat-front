@@ -37,10 +37,8 @@
           :to="item.to"
           @click="closeOnMobile"
           :class="[
-            'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            route.path.startsWith(item.match)
-              ? 'bg-purple-100 text-purple-700'
-              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+            'flex items-center gap-3 rounded-full px-5 py-3 text-sm font-semibold transition-colors',
+            route.path.startsWith(item.match) ? item.activeClass : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
           ]"
         >
           <ion-icon :name="item.icon"></ion-icon>
@@ -69,16 +67,16 @@ const updateViewport = () => {
 
 const items = computed(() => {
   const base = [
-    { to: '/dashboard', match: '/dashboard', label: 'Dashboard', icon: 'grid-outline' },
-    { to: '/fichas', match: '/fichas', label: 'Fichas', icon: 'document-text-outline' },
-    { to: '/perfil', match: '/perfil', label: 'Perfil', icon: 'person-outline' }
+    { to: '/dashboard', match: '/dashboard', label: 'Dashboard', icon: 'grid-outline', activeClass: 'bg-indigo-100 text-indigo-700' },
+    { to: '/fichas', match: '/fichas', label: 'Fichas', icon: 'document-text-outline', activeClass: 'bg-emerald-100 text-emerald-700' },
+    { to: '/perfil', match: '/perfil', label: 'Perfil', icon: 'person-outline', activeClass: 'bg-amber-100 text-amber-700' }
   ]
 
   if (userRole.value === 'admin') {
-    base.splice(2, 0, { to: '/admin', match: '/admin', label: 'Admin', icon: 'settings-outline' })
+    base.splice(2, 0, { to: '/admin', match: '/admin', label: 'Admin', icon: 'settings-outline', activeClass: 'bg-fuchsia-100 text-fuchsia-700' })
   }
   if (userRole.value === 'bibliotecario') {
-    base.splice(2, 0, { to: '/bibliotecario', match: '/bibliotecario', label: 'Solicitações', icon: 'book-outline' })
+    base.splice(2, 0, { to: '/bibliotecario', match: '/bibliotecario', label: 'Solicitações', icon: 'book-outline', activeClass: 'bg-sky-100 text-sky-700' })
   }
 
   return base

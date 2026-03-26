@@ -136,6 +136,7 @@ import Input from '../components/UI/Input.vue'
 import Textarea from '../components/UI/Textarea.vue'
 import Button from '../components/UI/Button.vue'
 import api from '../services/api'
+import { notifyError, notifyInfo } from '../services/toast'
 
 const router = useRouter()
 
@@ -176,7 +177,7 @@ const handleFileChange = (e) => {
   const file = e.target.files?.[0]
   if (file) {
     if (file.type !== 'application/pdf') {
-      alert('Apenas arquivos PDF são permitidos')
+      notifyError('Apenas arquivos PDF são permitidos')
       e.target.value = ''
       return
     }
@@ -317,7 +318,7 @@ const carregarBibliotecas = async () => {
     const response = await api.get('/api/public/bibliotecas')
     bibliotecas.value = response.data
   } catch (error) {
-    alert('Erro ao carregar bibliotecas. Tente novamente.')
+    notifyError('Erro ao carregar bibliotecas. Tente novamente.')
   } finally {
     loadingBibliotecas.value = false
   }
@@ -325,7 +326,7 @@ const carregarBibliotecas = async () => {
 
 const handleSubmit = async () => {
   if (!form.value.biblioteca_id) {
-    alert('Por favor, selecione uma biblioteca')
+    notifyInfo('Por favor, selecione uma biblioteca')
     return
   }
   
@@ -345,7 +346,7 @@ const handleSubmit = async () => {
     router.push('/fichas')
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao criar ficha. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
   } finally {
     loading.value = false
   }

@@ -14,12 +14,14 @@
       </main>
       <Footer v-if="showFooter" />
     </div>
+    <Toaster rich-colors position="top-right" />
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { Toaster } from 'vue-sonner'
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import InternalSidebar from './components/InternalSidebar.vue'

@@ -188,6 +188,7 @@ import Card from '../components/UI/Card.vue'
 import Button from '../components/UI/Button.vue'
 import Modal from '../components/UI/Modal.vue'
 import api from '../services/api'
+import { notifyError, notifySuccess, notifyInfo } from '../services/toast'
 
 const router = useRouter()
 const route = useRoute()
@@ -209,7 +210,7 @@ const carregarSolicitacao = async () => {
     solicitacao.value = solicitacoes.find(s => s.id === solicitacaoId)
     
     if (!solicitacao.value) {
-      alert('Solicitação não encontrada')
+      notifyInfo('Solicitação não encontrada')
       router.push('/bibliotecario')
       return
     }
@@ -228,7 +229,7 @@ const carregarSolicitacao = async () => {
       pdfUrl.value = null
     }
   } catch (error) {
-    alert('Erro ao carregar solicitação. Tente novamente.')
+    notifyError('Erro ao carregar solicitação. Tente novamente.')
     router.push('/bibliotecario')
   } finally {
     loading.value = false
@@ -254,10 +255,10 @@ const confirmarAcao = async () => {
     solicitacao.value = response.data.ficha
     showConfirmModal.value = false
     
-    alert(aprovado ? 'Ficha aprovada com sucesso!' : 'Ficha negada com sucesso!')
+    notifySuccess(aprovado ? 'Ficha aprovada com sucesso!' : 'Ficha negada com sucesso!')
   } catch (error) {
     const errorMsg = error.response?.data?.detail || 'Erro ao processar solicitação. Tente novamente.'
-    alert(errorMsg)
+    notifyError(errorMsg)
   } finally {
     processando.value = false
   }
