@@ -13,7 +13,7 @@
             </div>
           </div>
           <h1 class="text-xl font-bold text-gray-900 mb-2">Entrar</h1>
-          <p class="text-gray-600">Acesse sua conta para continuar</p>
+          <p class="text-gray-600">Acesse sua conta para continuar...</p>
         </div>
 
         <Card>
