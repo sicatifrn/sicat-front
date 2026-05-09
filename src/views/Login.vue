@@ -9,23 +9,7 @@
           Entre com sua matrícula e senha para continuar no <span class="font-semibold text-purple-700">SICAT</span>.
         </p>
       </div>
-<<<<<<< HEAD
       <Card>
-=======
-
-      <div class="w-full max-w-md mx-auto">
-        <div class="text-center mb-8">
-          <div class="flex justify-center mb-4">
-            <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
-              <ion-icon name="library-outline" class="text-3xl text-purple-600"></ion-icon>
-            </div>
-          </div>
-          <h1 class="text-xl font-bold text-gray-900 mb-2">Entrar</h1>
-          <p class="text-gray-600">Acesse sua conta para continuar!</p>
-        </div>
-
-        <Card>
->>>>>>> 3921d512ec67a2b5042159d04dd2307cbdda3f8e
         <form @submit.prevent="handleLogin" class="space-y-5">
           <Input
             id="matricula"
