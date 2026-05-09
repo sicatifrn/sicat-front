@@ -5,12 +5,12 @@
     :class="[
       'rounded-full font-medium transition-all duration-200 cursor-pointer inline-flex items-center justify-center',
       sizeClass,
-      'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white',
+      'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream-100',
       variant === 'primary' 
-        ? 'bg-purple-600 hover:bg-purple-700 text-white focus:ring-purple-500 disabled:bg-purple-400 disabled:cursor-not-allowed'
+        ? 'bg-brand-500 hover:bg-brand-600 text-white shadow-sm focus:ring-brand-400 disabled:bg-brand-300 disabled:cursor-not-allowed'
         : variant === 'outline'
-        ? 'border border-gray-300 hover:bg-gray-100 text-gray-700 focus:ring-gray-400 disabled:opacity-50'
-        : 'bg-gray-200 hover:bg-gray-300 text-gray-800 focus:ring-gray-400 disabled:opacity-50',
+        ? 'border border-muted-200 bg-cream-50/80 hover:bg-brand-50 text-muted-700 focus:ring-brand-300 disabled:opacity-50'
+        : 'bg-muted-100 hover:bg-muted-200 text-muted-800 focus:ring-muted-300 disabled:opacity-50',
       loading && 'opacity-70 cursor-wait'
     ]"
     @click="$emit('click', $event)"

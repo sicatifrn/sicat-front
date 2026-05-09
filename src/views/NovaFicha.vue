@@ -4,7 +4,7 @@
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-            <ion-icon name="add-circle-outline" class="text-purple-600"></ion-icon>
+            <ion-icon name="add-circle-outline" class="text-brand-600"></ion-icon>
             Nova Ficha Catalográfica
           </h1>
           <p class="text-gray-600">Preencha os dados da ficha catalográfica</p>
@@ -60,7 +60,7 @@
               <select
                 v-model="form.biblioteca_id"
                 required
-                class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                 :disabled="loadingBibliotecas"
               >
                 <option value="">Selecione uma biblioteca</option>

@@ -3,7 +3,7 @@
     <div class="mb-8 flex items-center justify-between">
       <div>
         <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <ion-icon name="document-text-outline" class="text-purple-600"></ion-icon>
+          <ion-icon name="document-text-outline" class="text-brand-600"></ion-icon>
           Minhas Fichas
         </h1>
         <p class="text-gray-600">Gerencie suas fichas catalográficas</p>
@@ -17,7 +17,7 @@
     </div>
 
     <div v-if="loading" class="text-center py-12">
-      <ion-icon name="hourglass-outline" class="text-4xl text-purple-600 animate-spin"></ion-icon>
+      <ion-icon name="hourglass-outline" class="text-4xl text-brand-600 animate-spin"></ion-icon>
       <p class="text-gray-600 mt-4">Carregando...</p>
     </div>
 
@@ -33,7 +33,7 @@
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <Card v-for="ficha in fichas" :key="ficha.id" class="hover:border-purple-600 hover:shadow-md transition-all">
+      <Card v-for="ficha in fichas" :key="ficha.id" class="hover:border-brand-500 hover:shadow-md transition-all">
         <div class="space-y-4">
           <div class="flex items-start justify-between">
             <div class="flex-1">

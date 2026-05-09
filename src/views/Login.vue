@@ -6,7 +6,7 @@
           Bem-vindo de volta
         </h1>
         <p class="text-gray-600 text-sm leading-relaxed">
-          Entre com sua matrícula e senha para continuar no <span class="font-semibold text-purple-700">SICAT</span>.
+          Entre com sua matrícula e senha para continuar no <span class="font-semibold text-brand-700">SICAT</span>.
         </p>
       </div>
       <Card>
@@ -52,7 +52,7 @@
             </Button>
           </div>
           <div class="text-center">
-            <router-link to="/recuperar-senha" class="text-sm text-purple-700 hover:text-purple-800 font-medium">
+            <router-link to="/recuperar-senha" class="text-sm text-brand-700 hover:text-brand-800 font-medium">
               Esqueci minha senha
             </router-link>
           </div>

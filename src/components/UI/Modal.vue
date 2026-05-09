@@ -9,20 +9,20 @@
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
         
         <div :class="[
-          'relative bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-y-auto',
+          'relative bg-cream-50 rounded-lg shadow-xl border border-muted-100 w-full max-h-[90vh] overflow-y-auto',
           size === 'large' ? 'max-w-5xl' : 'max-w-md'
         ]">
           <div class="p-6">
             <div v-if="title || $slots.header" class="flex items-center justify-between mb-4">
               <div v-if="title" class="flex-1">
-                <h2 class="text-xl font-semibold text-gray-900">{{ title }}</h2>
+                <h2 class="text-xl font-semibold text-muted-800">{{ title }}</h2>
               </div>
               <div v-else-if="$slots.header" class="flex-1">
                 <slot name="header"></slot>
               </div>
               <button
                 @click="$emit('close')"
-                class="text-gray-400 hover:text-gray-600 transition-colors ml-4 flex-shrink-0"
+                class="text-muted-400 hover:text-muted-600 transition-colors ml-4 flex-shrink-0"
               >
                 <ion-icon name="close-outline" class="text-2xl"></ion-icon>
               </button>
@@ -69,13 +69,13 @@ defineEmits(['close'])
   opacity: 0;
 }
 
-.modal-enter-active .bg-white,
-.modal-leave-active .bg-white {
+.modal-enter-active .bg-cream-50,
+.modal-leave-active .bg-cream-50 {
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.modal-enter-from .bg-white,
-.modal-leave-to .bg-white {
+.modal-enter-from .bg-cream-50,
+.modal-leave-to .bg-cream-50 {
   transform: scale(0.95);
   opacity: 0;
 }

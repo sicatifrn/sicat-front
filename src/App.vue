@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-cream-100">
     <div v-if="isInternalLayout" class="flex min-h-screen">
       <InternalSidebar />
       <main class="flex-1 lg:ml-0 pt-14 lg:pt-0">

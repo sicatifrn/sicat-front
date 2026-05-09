@@ -3,7 +3,7 @@
     <div class="mb-8 flex items-center justify-between">
       <div>
         <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <ion-icon name="person-outline" class="text-purple-600"></ion-icon>
+          <ion-icon name="person-outline" class="text-brand-600"></ion-icon>
           Meu Perfil
         </h1>
         <p class="text-gray-600">Informações da sua conta</p>
@@ -32,7 +32,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <Card class="lg:col-span-2">
         <div v-if="loading" class="text-center py-12">
-          <ion-icon name="hourglass-outline" class="text-4xl text-purple-600 animate-spin"></ion-icon>
+          <ion-icon name="hourglass-outline" class="text-4xl text-brand-600 animate-spin"></ion-icon>
           <p class="text-gray-600 mt-4">Carregando...</p>
         </div>
 
@@ -54,8 +54,8 @@
               <label class="block text-xs font-medium text-gray-500 mb-1">Tipo de Usuário</label>
               <span :class="[
                 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full',
-                user.tipo === 'admin' ? 'bg-purple-100 text-purple-800' :
-                user.tipo === 'bibliotecario' ? 'bg-blue-100 text-blue-800' :
+                user.tipo === 'admin' ? 'bg-brand-100 text-brand-800' :
+                user.tipo === 'bibliotecario' ? 'bg-muted-100 text-muted-800' :
                 'bg-gray-100 text-gray-800'
               ]">
                 <ion-icon :name="
@@ -99,8 +99,8 @@
       <Card>
         <div class="space-y-4">
           <div class="flex items-center gap-3 pb-4 border-b border-gray-200">
-            <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
-              <ion-icon name="person-outline" class="text-3xl text-purple-600"></ion-icon>
+            <div class="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center">
+              <ion-icon name="person-outline" class="text-3xl text-brand-600"></ion-icon>
             </div>
             <div>
               <p class="font-semibold text-gray-900">{{ user?.nome_completo || 'Usuário' }}</p>

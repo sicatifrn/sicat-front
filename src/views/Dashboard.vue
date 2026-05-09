@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
       <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-        <ion-icon name="grid-outline" class="text-purple-600"></ion-icon>
+        <ion-icon name="grid-outline" class="text-brand-600"></ion-icon>
         Dashboard
       </h1>
       <p class="text-gray-600">
@@ -18,7 +18,7 @@
             <p class="text-gray-600 text-sm mb-1">Total de Fichas</p>
             <p class="text-3xl font-bold text-gray-900">{{ stats.totalFichas }}</p>
           </div>
-          <ion-icon name="document-text-outline" class="text-4xl text-purple-600"></ion-icon>
+          <ion-icon name="document-text-outline" class="text-4xl text-brand-600"></ion-icon>
         </div>
       </Card>
       <Card>

@@ -99,7 +99,7 @@
       </template>
       
       <div v-if="loadingUsuariosParaAdicionar" class="text-center py-8">
-        <ion-icon name="hourglass-outline" class="text-3xl text-purple-600 animate-spin"></ion-icon>
+        <ion-icon name="hourglass-outline" class="text-3xl text-brand-600 animate-spin"></ion-icon>
         <p class="text-gray-600 mt-2 text-sm">Carregando usuários...</p>
       </div>
       <div v-else-if="usuariosDisponiveis.length === 0" class="text-center py-8">
@@ -110,7 +110,7 @@
           <label class="block text-sm font-medium text-gray-700 mb-2">Selecione o usuário</label>
           <select
             v-model="usuarioSelecionado"
-            class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent"
           >
             <option value="">Selecione um usuário</option>
             <option
@@ -122,8 +122,8 @@
             </option>
           </select>
         </div>
-        <div class="bg-purple-50 border border-purple-200 rounded-lg p-3">
-          <p class="text-xs text-purple-800 flex items-start gap-2">
+        <div class="bg-brand-50 border border-brand-200 rounded-lg p-3">
+          <p class="text-xs text-brand-800 flex items-start gap-2">
             <ion-icon name="information-circle-outline" class="text-base flex-shrink-0 mt-0.5"></ion-icon>
             <span>O usuário selecionado terá seu tipo alterado para "Bibliotecário" automaticamente.</span>
           </p>
@@ -207,7 +207,7 @@
       </template>
       
       <div v-if="loadingBibliotecarios" class="text-center py-8">
-        <ion-icon name="hourglass-outline" class="text-3xl text-purple-600 animate-spin"></ion-icon>
+        <ion-icon name="hourglass-outline" class="text-3xl text-brand-600 animate-spin"></ion-icon>
         <p class="text-gray-600 mt-2 text-sm">Carregando bibliotecários...</p>
       </div>
       <div v-else-if="bibliotecariosDaBiblioteca.length === 0" class="text-center py-8">

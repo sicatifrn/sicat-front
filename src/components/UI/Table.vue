@@ -1,7 +1,7 @@
 <template>
   <div class="rounded-3xl border border-gray-100 bg-gray-100 overflow-hidden">
     <div v-if="loading" class="text-center py-12">
-      <ion-icon name="hourglass-outline" class="text-4xl text-purple-600 animate-spin"></ion-icon>
+      <ion-icon name="hourglass-outline" class="text-4xl text-brand-600 animate-spin"></ion-icon>
       <p class="text-gray-600 mt-4">{{ loadingText || 'Carregando...' }}</p>
     </div>
 

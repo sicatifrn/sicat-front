@@ -1,12 +1,7 @@
 <template>
-  <div class="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-8">
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      <div class="hidden lg:flex items-center justify-center">
-        <img src="/user-book.svg" alt="Biblioteca" class="w-full max-w-md" />
-      </div>
-
-      <div class="w-full max-w-md mx-auto">
-        <Card>
+  <div class="flex-1 flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-md mx-auto">
+      <Card>
 
       <div class="mb-4">
         <div class="mb-3 text-center">
@@ -23,14 +18,14 @@
         </div>
         <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
           <div 
-            class="h-full bg-purple-600 transition-all duration-300 rounded-full"
+            class="h-full bg-brand-600 transition-all duration-300 rounded-full"
             :style="{ width: `${progressPercentage}%` }"
           ></div>
         </div>
         <div class="flex items-center justify-between mt-2">
-          <span :class="['text-[10px] font-medium', currentStep >= 1 ? 'text-purple-600' : 'text-gray-400']">Validação</span>
-          <span :class="['text-[10px] font-medium', currentStep >= 2 ? 'text-purple-600' : 'text-gray-400']">Confirmação</span>
-          <span :class="['text-[10px] font-medium', currentStep >= 3 ? 'text-purple-600' : 'text-gray-400']">Senha</span>
+          <span :class="['text-[10px] font-medium', currentStep >= 1 ? 'text-brand-600' : 'text-gray-400']">Validação</span>
+          <span :class="['text-[10px] font-medium', currentStep >= 2 ? 'text-brand-600' : 'text-gray-400']">Confirmação</span>
+          <span :class="['text-[10px] font-medium', currentStep >= 3 ? 'text-brand-600' : 'text-gray-400']">Senha</span>
         </div>
       </div>
 
@@ -61,7 +56,7 @@
       </div>
 
       <div v-else-if="currentStep === 2" class="space-y-4">
-        <Card class="bg-purple-50 border-purple-200 p-4">
+        <Card class="bg-brand-50 border-brand-200 p-4">
           <div class="space-y-3">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
@@ -217,7 +212,6 @@
             </template>
           </div>
         </Card>
-      </div>
     </div>
   </div>
 </template>

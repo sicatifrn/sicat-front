@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
       <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-        <ion-icon name="book-outline" class="text-purple-600"></ion-icon>
+        <ion-icon name="book-outline" class="text-brand-600"></ion-icon>
         Fichas da Biblioteca
       </h1>
       <p class="text-gray-600">Visualize e gerencie todas as fichas da sua biblioteca</p>
@@ -15,7 +15,7 @@
             <p class="text-gray-600 text-sm mb-1">Total de Fichas</p>
             <p class="text-3xl font-bold text-gray-900">{{ stats.totalFichas }}</p>
           </div>
-          <ion-icon name="document-text-outline" class="text-4xl text-purple-600"></ion-icon>
+          <ion-icon name="document-text-outline" class="text-4xl text-brand-600"></ion-icon>
         </div>
       </Card>
       <Card>
@@ -39,7 +39,7 @@
     </div>
 
     <div v-if="loading" class="text-center py-12">
-      <ion-icon name="hourglass-outline" class="text-4xl text-purple-600 animate-spin"></ion-icon>
+      <ion-icon name="hourglass-outline" class="text-4xl text-brand-600 animate-spin"></ion-icon>
       <p class="text-gray-600 mt-4">Carregando solicitações...</p>
     </div>
 
@@ -55,7 +55,7 @@
           <h2 class="text-lg font-semibold text-gray-900">Todas as Fichas</h2>
           <select
             v-model="filtroStatus"
-            class="px-3 py-1.5 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            class="px-3 py-1.5 text-sm bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
           >
             <option value="todas">Todas</option>
             <option value="aguardando_autorizacao">Pendentes</option>
@@ -69,7 +69,7 @@
             :key="solicitacao.id"
             :class="[
               'p-4 transition-colors',
-              solicitacaoSelecionada?.id === solicitacao.id ? 'bg-purple-50 border-l-4 border-purple-600' : 'hover:bg-gray-50'
+              solicitacaoSelecionada?.id === solicitacao.id ? 'bg-brand-50 border-l-4 border-brand-500' : 'hover:bg-gray-50'
             ]"
           >
             <div @click="selecionarSolicitacao(solicitacao)" class="cursor-pointer">
@@ -210,7 +210,7 @@
             <button
               v-if="modalVer.pdfUrl"
               @click="abrirPdfNovaAbaModal"
-              class="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1"
+              class="text-xs text-brand-600 hover:text-brand-700 flex items-center gap-1"
             >
               <ion-icon name="open-outline"></ion-icon>
               Abrir em nova aba

@@ -1,11 +1,11 @@
 <template>
-  <header class="border-b border-gray-200 bg-white">
+  <header class="border-b border-muted-100 bg-cream-50/90 backdrop-blur-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 gap-4 overflow-x-auto">
         <div class="flex items-center gap-3 flex-shrink-0">
           <router-link
             to="/"
-            class="flex items-center flex-shrink-0 min-w-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2"
+            class="flex items-center flex-shrink-0 min-w-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50"
           >
             <img
               src="/logo.svg"
@@ -130,7 +130,7 @@ import Button from './UI/Button.vue'
 const route = useRoute()
 
 const navActiveClass =
-  'bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-100 hover:text-purple-800'
+  'bg-brand-100 text-brand-800 border-brand-200 hover:bg-brand-100 hover:text-brand-900'
 
 const isAuthenticated = ref(!!localStorage.getItem('access_token'))
 const userRole = ref(localStorage.getItem('user_role') || '')

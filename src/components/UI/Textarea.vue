@@ -14,7 +14,7 @@
       :class="[
         'w-full px-4 py-2 bg-white border border-gray-300 rounded-lg',
         'text-gray-900 placeholder-gray-400 resize-none',
-        'focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+        'focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         error && 'border-red-500 focus:ring-red-500'
       ]"

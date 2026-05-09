@@ -11,7 +11,7 @@
       <template #cell-tipo="{ item }">
         <span :class="[
           'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium',
-          item.tipo === 'admin' ? 'bg-purple-100 text-purple-800' :
+          item.tipo === 'admin' ? 'bg-brand-100 text-brand-800' :
           item.tipo === 'bibliotecario' ? 'bg-blue-100 text-blue-800' :
           'bg-gray-100 text-gray-800'
         ]">
@@ -32,7 +32,7 @@
           :value="item.tipo"
           @change="alterarTipoUsuario(item.id, $event.target.value)"
           :disabled="item.id === currentUserId"
-          class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent hover:border-purple-400 transition-colors"
+          class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent hover:border-brand-300 transition-colors"
         >
           <option value="default">Usuário</option>
           <option value="bibliotecario">Bibliotecário</option>

@@ -10,7 +10,7 @@
           <span class="text-sm">Voltar</span>
         </button>
         <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <ion-icon name="document-text-outline" class="text-purple-600"></ion-icon>
+          <ion-icon name="document-text-outline" class="text-brand-600"></ion-icon>
           Detalhes da Solicitação
         </h1>
         <p v-if="solicitacao" class="text-gray-600">ID: {{ solicitacao.id_curto }}</p>
@@ -35,7 +35,7 @@
     </div>
 
     <div v-if="loading" class="text-center py-12">
-      <ion-icon name="hourglass-outline" class="text-4xl text-purple-600 animate-spin"></ion-icon>
+      <ion-icon name="hourglass-outline" class="text-4xl text-brand-600 animate-spin"></ion-icon>
       <p class="text-gray-600 mt-4">Carregando...</p>
     </div>
 

@@ -1,12 +1,7 @@
 <template>
-  <div class="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-8">
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      <div class="hidden lg:flex items-center justify-center">
-        <img src="/user-books.svg" alt="Recuperar senha" class="w-full max-w-lg" />
-      </div>
-
-      <div class="w-full max-w-md mx-auto">
-        <Card>
+  <div class="flex-1 flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-md mx-auto">
+      <Card>
           <div class="mb-4">
             <div class="mb-3 text-center">
               <h2 class="text-lg font-semibold text-gray-900 mb-1">
@@ -23,7 +18,7 @@
             </div>
             <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
-                class="h-full bg-purple-600 transition-all duration-300 rounded-full"
+                class="h-full bg-brand-600 transition-all duration-300 rounded-full"
                 :style="{ width: `${progressPercentage}%` }"
               ></div>
             </div>
@@ -50,7 +45,7 @@
           </div>
 
           <div v-else-if="currentStep === 2" class="space-y-4">
-            <Card class="bg-purple-50 border-purple-200 p-4">
+            <Card class="bg-brand-50 border-brand-200 p-4">
               <div class="space-y-3">
                 <div>
                   <label class="block text-sm font-semibold text-gray-700 mb-1">Nome Completo</label>
@@ -136,7 +131,6 @@
             </template>
           </div>
         </Card>
-      </div>
     </div>
   </div>
 </template>

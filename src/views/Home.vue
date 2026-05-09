@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center">
       <div class="flex justify-center mb-8">
-        <ion-icon name="library-outline" class="text-6xl text-purple-600"></ion-icon>
+        <ion-icon name="library-outline" class="text-6xl text-brand-600"></ion-icon>
       </div>
       <h1 class="text-5xl font-bold text-gray-900 mb-4">
         Sistema de Catalogação
