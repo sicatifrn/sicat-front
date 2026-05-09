@@ -1,22 +1,15 @@
 <template>
-  <div class="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-8">
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      <div class="hidden lg:flex items-center justify-center">
-        <img src="/user-books.svg" alt="Biblioteca" class="w-full max-w-lg" />
+  <div class="flex-1 flex items-center justify-center px-4 py-8">
+    <div class="w-full max-w-md">
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold tracking-tight text-gray-900 mb-2">
+          Bem-vindo de volta
+        </h1>
+        <p class="text-gray-600 text-sm leading-relaxed">
+          Entre com sua matrícula e senha para continuar no <span class="font-semibold text-purple-700">SICAT</span>.
+        </p>
       </div>
-
-      <div class="w-full max-w-md mx-auto">
-        <div class="text-center mb-8">
-          <div class="flex justify-center mb-4">
-            <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
-              <ion-icon name="library-outline" class="text-3xl text-purple-600"></ion-icon>
-            </div>
-          </div>
-          <h1 class="text-xl font-bold text-gray-900 mb-2">Entrar</h1>
-          <p class="text-gray-600">Acesse sua conta para continuar...</p>
-        </div>
-
-        <Card>
+      <Card>
         <form @submit.prevent="handleLogin" class="space-y-5">
           <Input
             id="matricula"
@@ -65,7 +58,6 @@
           </div>
         </form>
       </Card>
-      </div>
     </div>
   </div>
 </template>

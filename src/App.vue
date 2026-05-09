@@ -9,7 +9,7 @@
 
     <div v-else class="min-h-screen flex flex-col">
       <Header />
-      <main class="flex-1">
+      <main class="flex-1 flex flex-col min-h-0">
         <router-view />
       </main>
       <Footer v-if="showFooter" />
@@ -30,8 +30,7 @@ const route = useRoute()
 
 const isInternalLayout = computed(() => route.meta.requiresAuth)
 
-const showFooter = computed(() => {
-  const routesWithFooter = ['/login', '/register', '/recuperar-senha']
-  return routesWithFooter.includes(route.path)
-})
+const authRoutes = ['/login', '/register', '/recuperar-senha']
+
+const showFooter = computed(() => authRoutes.includes(route.path))
 </script>
