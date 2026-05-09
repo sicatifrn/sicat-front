@@ -80,6 +80,12 @@ export const routes = [
     name: 'VerSolicitacao',
     component: () => import('../views/VerSolicitacao.vue'),
     meta: { requiresAuth: true, requiresBibliotecario: true }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/NotFound.vue'),
+    meta: { requiresAuth: false }
   }
 ]
 
