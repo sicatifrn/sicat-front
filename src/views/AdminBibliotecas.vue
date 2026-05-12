@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div class="mb-4 flex justify-end">
-      <Button @click="showNovaBiblioteca = true">
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm text-muted-600">
+        Selecione <strong class="text-muted-800">Ver mais</strong> para editar dados, gerir bibliotecários ou remover a biblioteca.
+      </p>
+      <Button class="shrink-0 gap-1.5 self-start sm:self-auto" @click="showNovaBiblioteca = true">
         <ion-icon name="add-outline"></ion-icon>
-        Nova Biblioteca
+        Nova biblioteca
       </Button>
     </div>
 
@@ -11,81 +14,144 @@
       :columns="columns"
       :items="bibliotecas"
       :loading="loading"
-      loading-text="Carregando bibliotecas..."
+      loading-text="A carregar bibliotecas…"
       empty-text="Nenhuma biblioteca cadastrada"
       empty-icon="library-outline"
     >
       <template #empty-action>
         <Button @click="showNovaBiblioteca = true">
           <ion-icon name="add-outline"></ion-icon>
-          Criar Primeira Biblioteca
+          Criar primeira biblioteca
         </Button>
       </template>
 
       <template #cell-data_criacao="{ value }">
-        {{ new Date(value).toLocaleDateString('pt-BR') }}
+        {{ value ? new Date(value).toLocaleDateString('pt-BR') : '—' }}
       </template>
 
       <template #cell-acoes="{ item }">
-        <div class="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            @click="verDetalhes(item)"
-            title="Ver detalhes"
-          >
-            <ion-icon name="eye-outline"></ion-icon>
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            @click="editarBiblioteca(item)"
-            title="Editar biblioteca"
-          >
-            <ion-icon name="create-outline"></ion-icon>
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            @click="verBibliotecarios(item)"
-            title="Ver bibliotecários"
-          >
-            <ion-icon name="people-outline"></ion-icon>
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            @click="confirmarDeletar(item)"
-            title="Remover biblioteca"
-            class="text-red-600 hover:text-red-700 hover:border-red-400"
-          >
-            <ion-icon name="trash-outline"></ion-icon>
-          </Button>
-        </div>
+        <Button size="sm" variant="outline" class="gap-1.5 font-semibold" @click="abrirDrawer(item)">
+          Ver mais
+          <ion-icon name="chevron-forward-outline" class="text-base"></ion-icon>
+        </Button>
       </template>
     </Table>
 
-    <Modal :show="showNovaBiblioteca" title="Nova Biblioteca" @close="showNovaBiblioteca = false">
-      <form @submit.prevent="criarBiblioteca" class="space-y-4">
-        <Input
-          label="Nome"
-          v-model="novaBiblioteca.nome"
-          placeholder="Nome da biblioteca"
-          required
-        />
-        <Input
-          label="Campus"
-          v-model="novaBiblioteca.campus"
-          placeholder="Nome do campus"
-          required
-        />
-        <div class="flex gap-2 justify-end">
-          <Button type="button" variant="outline" @click="showNovaBiblioteca = false">
-            Cancelar
+    <Drawer
+      :show="drawerOpen"
+      :title="bibliotecaAtiva?.nome || 'Biblioteca'"
+      :subtitle="bibliotecaAtiva ? `${bibliotecaAtiva.campus}` : ''"
+      wide
+      @close="fecharDrawer"
+    >
+      <div v-if="bibliotecaAtiva" class="space-y-5">
+        <div class="flex rounded-xl border border-muted-200 bg-muted-50/80 p-1">
+          <button
+            type="button"
+            class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-semibold transition"
+            :class="
+              drawerTab === 'dados'
+                ? 'bg-white text-brand-800 shadow-sm'
+                : 'text-muted-600 hover:text-muted-900'
+            "
+            @click="drawerTab = 'dados'"
+          >
+            Geral
+          </button>
+          <button
+            type="button"
+            class="flex-1 rounded-lg px-3 py-2 text-center text-sm font-semibold transition"
+            :class="
+              drawerTab === 'bibliotecarios'
+                ? 'bg-white text-brand-800 shadow-sm'
+                : 'text-muted-600 hover:text-muted-900'
+            "
+            @click="abrirTabBibliotecarios"
+          >
+            Bibliotecários
+          </button>
+        </div>
+
+        <div v-show="drawerTab === 'dados'" class="space-y-5">
+          <dl class="grid gap-3 text-sm sm:grid-cols-2">
+            <div>
+              <dt class="font-semibold text-muted-500">Criada em</dt>
+              <dd class="mt-0.5 text-muted-900">
+                {{ new Date(bibliotecaAtiva.data_criacao).toLocaleString('pt-BR') }}
+              </dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-muted-500">Última edição</dt>
+              <dd class="mt-0.5 text-muted-900">
+                {{ new Date(bibliotecaAtiva.data_edicao).toLocaleString('pt-BR') }}
+              </dd>
+            </div>
+          </dl>
+
+          <form class="space-y-4" @submit.prevent="salvarEdicao">
+            <Input v-model="editForm.nome" label="Nome" placeholder="Nome da biblioteca" required />
+            <Input v-model="editForm.campus" label="Campus" placeholder="Campus" required />
+            <div class="flex justify-end">
+              <Button type="submit" :loading="editandoBiblioteca">Guardar alterações</Button>
+            </div>
+          </form>
+        </div>
+
+        <div v-show="drawerTab === 'bibliotecarios'" class="space-y-4">
+          <div class="flex justify-end">
+            <Button size="sm" class="gap-1" @click="abrirModalAdicionarBibliotecario(bibliotecaAtiva)">
+              <ion-icon name="person-add-outline"></ion-icon>
+              Adicionar bibliotecário
+            </Button>
+          </div>
+
+          <div v-if="loadingBibliotecarios" class="flex flex-col items-center py-10 text-muted-600">
+            <ion-icon name="hourglass-outline" class="mb-2 text-3xl text-brand-600 animate-spin"></ion-icon>
+            <span class="text-sm">A carregar…</span>
+          </div>
+          <div v-else-if="bibliotecariosDaBiblioteca.length === 0" class="rounded-xl border border-dashed border-muted-300 bg-muted-50/50 py-10 text-center text-sm text-muted-600">
+            Nenhum bibliotecário associado.
+          </div>
+          <ul v-else class="space-y-2">
+            <li
+              v-for="b in bibliotecariosDaBiblioteca"
+              :key="b.id"
+              class="flex items-center justify-between gap-3 rounded-xl border border-muted-200 bg-white px-4 py-3"
+            >
+              <div class="min-w-0">
+                <p class="truncate font-medium text-muted-900">{{ b.nome_completo }}</p>
+                <p class="text-xs text-muted-500">{{ b.matricula }}</p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                class="shrink-0 text-red-700 hover:border-red-300 hover:bg-red-50"
+                @click="removerBibliotecario(b.id)"
+              >
+                <ion-icon name="trash-outline"></ion-icon>
+              </Button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <Button type="button" variant="outline" class="text-red-700 hover:border-red-300" @click="confirmarDeletar">
+            Excluir biblioteca
           </Button>
-          <Button type="submit" :loading="criandoBiblioteca">
-            Criar
-          </Button>
+          <Button type="button" variant="outline" @click="fecharDrawer">Fechar</Button>
+        </div>
+      </template>
+    </Drawer>
+
+    <Modal :show="showNovaBiblioteca" title="Nova biblioteca" @close="showNovaBiblioteca = false">
+      <form class="space-y-4" @submit.prevent="criarBiblioteca">
+        <Input v-model="novaBiblioteca.nome" label="Nome" placeholder="Nome da biblioteca" required />
+        <Input v-model="novaBiblioteca.campus" label="Campus" placeholder="Nome do campus" required />
+        <div class="flex justify-end gap-2">
+          <Button type="button" variant="outline" @click="showNovaBiblioteca = false">Cancelar</Button>
+          <Button type="submit" :loading="criandoBiblioteca">Criar</Button>
         </div>
       </form>
     </Modal>
@@ -93,178 +159,57 @@
     <Modal :show="showAdicionarBibliotecario" @close="showAdicionarBibliotecario = false">
       <template #header>
         <div>
-          <h2 class="text-xl font-semibold text-gray-900">Adicionar Bibliotecário</h2>
-          <p class="text-sm text-gray-600 mt-1">{{ bibliotecaSelecionada?.nome }}</p>
+          <h2 class="text-xl font-semibold text-muted-900">Adicionar bibliotecário</h2>
+          <p class="mt-1 text-sm text-muted-600">{{ bibliotecaSelecionada?.nome }}</p>
         </div>
       </template>
-      
-      <div v-if="loadingUsuariosParaAdicionar" class="text-center py-8">
-        <ion-icon name="hourglass-outline" class="text-3xl text-brand-600 animate-spin"></ion-icon>
-        <p class="text-gray-600 mt-2 text-sm">Carregando usuários...</p>
+
+      <div v-if="loadingUsuariosParaAdicionar" class="flex flex-col items-center py-10 text-muted-600">
+        <ion-icon name="hourglass-outline" class="mb-2 text-3xl text-brand-600 animate-spin"></ion-icon>
+        <span class="text-sm">A carregar utilizadores…</span>
       </div>
-      <div v-else-if="usuariosDisponiveis.length === 0" class="text-center py-8">
-        <p class="text-gray-600">Nenhum usuário disponível</p>
+      <div v-else-if="usuariosDisponiveis.length === 0" class="py-8 text-center text-sm text-muted-600">
+        Nenhum utilizador disponível.
       </div>
       <div v-else class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Selecione o usuário</label>
+          <label class="mb-2 block text-sm font-semibold text-muted-700">Utilizador</label>
           <select
             v-model="usuarioSelecionado"
-            class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-transparent"
+            class="w-full rounded-lg border border-muted-300 bg-white px-4 py-2.5 text-sm text-muted-900 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-400/40"
           >
-            <option value="">Selecione um usuário</option>
-            <option
-              v-for="usuario in usuariosDisponiveis"
-              :key="usuario.id"
-              :value="usuario.id"
-            >
-              {{ usuario.nome_completo }} ({{ usuario.matricula }}) - {{ usuario.tipo === 'admin' ? 'Admin' : usuario.tipo === 'bibliotecario' ? 'Bibliotecário' : 'Usuário' }}
+            <option value="">Selecione…</option>
+            <option v-for="u in usuariosDisponiveis" :key="u.id" :value="u.id">
+              {{ u.nome_completo }} ({{ u.matricula }}) — {{ labelTipo(u.tipo) }}
             </option>
           </select>
         </div>
-        <div class="bg-brand-50 border border-brand-200 rounded-lg p-3">
-          <p class="text-xs text-brand-800 flex items-start gap-2">
-            <ion-icon name="information-circle-outline" class="text-base flex-shrink-0 mt-0.5"></ion-icon>
-            <span>O usuário selecionado terá seu tipo alterado para "Bibliotecário" automaticamente.</span>
-          </p>
-        </div>
-        <div class="flex gap-2 justify-end">
-          <Button type="button" variant="outline" @click="showAdicionarBibliotecario = false">
-            Cancelar
-          </Button>
-          <Button
-            @click="adicionarBibliotecario"
-            :loading="adicionandoBibliotecario"
-            :disabled="!usuarioSelecionado"
-          >
-            Adicionar
-          </Button>
-        </div>
-      </div>
-    </Modal>
-
-    <Modal :show="showDetalhes" title="Detalhes da Biblioteca" @close="showDetalhes = false">
-      <div v-if="bibliotecaParaDetalhes" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-          <p class="text-gray-900 font-medium">{{ bibliotecaParaDetalhes.nome }}</p>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Campus</label>
-          <p class="text-gray-900">{{ bibliotecaParaDetalhes.campus }}</p>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Data de Criação</label>
-          <p class="text-gray-900">{{ new Date(bibliotecaParaDetalhes.data_criacao).toLocaleDateString('pt-BR') }}</p>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Última Edição</label>
-          <p class="text-gray-900">{{ new Date(bibliotecaParaDetalhes.data_edicao).toLocaleDateString('pt-BR') }}</p>
-        </div>
-      </div>
-    </Modal>
-
-    <Modal :show="showEditar" title="Editar Biblioteca" @close="showEditar = false">
-      <form v-if="bibliotecaParaEditar" @submit.prevent="salvarEdicao" class="space-y-4">
-        <Input
-          label="Nome"
-          v-model="bibliotecaParaEditar.nome"
-          placeholder="Nome da biblioteca"
-          required
-        />
-        <Input
-          label="Campus"
-          v-model="bibliotecaParaEditar.campus"
-          placeholder="Nome do campus"
-          required
-        />
-        <div class="flex gap-2 justify-end">
-          <Button type="button" variant="outline" @click="showEditar = false">
-            Cancelar
-          </Button>
-          <Button type="submit" :loading="editandoBiblioteca">
-            Salvar
-          </Button>
-        </div>
-      </form>
-    </Modal>
-
-    <Modal :show="showBibliotecarios" @close="showBibliotecarios = false">
-      <template #header>
-        <div class="flex items-center justify-between w-full">
-          <div>
-            <h2 class="text-xl font-semibold text-gray-900">Bibliotecários</h2>
-            <p class="text-sm text-gray-600 mt-1">{{ bibliotecaParaBibliotecarios?.nome }}</p>
-          </div>
-          <Button
-            size="sm"
-            @click="abrirModalAdicionarBibliotecario(bibliotecaParaBibliotecarios)"
-          >
-            <ion-icon name="add-outline"></ion-icon>
-            Adicionar
-          </Button>
-        </div>
-      </template>
-      
-      <div v-if="loadingBibliotecarios" class="text-center py-8">
-        <ion-icon name="hourglass-outline" class="text-3xl text-brand-600 animate-spin"></ion-icon>
-        <p class="text-gray-600 mt-2 text-sm">Carregando bibliotecários...</p>
-      </div>
-      <div v-else-if="bibliotecariosDaBiblioteca.length === 0" class="text-center py-8">
-        <ion-icon name="people-outline" class="text-4xl text-gray-400 mb-4"></ion-icon>
-        <p class="text-gray-600 mb-4">Nenhum bibliotecário vinculado a esta biblioteca</p>
-        <Button
-          @click="abrirModalAdicionarBibliotecario(bibliotecaParaBibliotecarios)"
-        >
-          <ion-icon name="add-outline"></ion-icon>
-          Adicionar Bibliotecário
-        </Button>
-      </div>
-      <div v-else class="space-y-3">
-        <div
-          v-for="bibliotecario in bibliotecariosDaBiblioteca"
-          :key="bibliotecario.id"
-          class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          <div>
-            <p class="font-medium text-gray-900">{{ bibliotecario.nome_completo }}</p>
-            <p class="text-sm text-gray-600">{{ bibliotecario.matricula }}</p>
-          </div>
-          <Button
-            size="sm"
-            variant="outline"
-            @click="removerBibliotecario(bibliotecario.id)"
-            class="text-red-600 hover:text-red-700 hover:border-red-400"
-          >
-            <ion-icon name="trash-outline"></ion-icon>
-            Remover
-          </Button>
-        </div>
-      </div>
-    </Modal>
-
-    <Modal :show="showConfirmarDeletar" title="Confirmar Exclusão" @close="showConfirmarDeletar = false">
-      <div v-if="bibliotecaParaDeletar" class="space-y-4">
-        <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p class="text-sm text-red-800">
-            <ion-icon name="warning-outline" class="inline mr-1"></ion-icon>
-            Tem certeza que deseja deletar a biblioteca <strong>{{ bibliotecaParaDeletar.nome }}</strong>?
-          </p>
-        </div>
-        <p class="text-sm text-gray-600">
-          Esta ação não pode ser desfeita. A biblioteca só pode ser deletada se não houver fichas associadas a ela.
+        <p class="rounded-lg border border-brand-200 bg-brand-50/90 p-3 text-xs text-brand-900">
+          O tipo do utilizador passará automaticamente a <strong>bibliotecário</strong>.
         </p>
-        <div class="flex gap-2 justify-end">
-          <Button type="button" variant="outline" @click="showConfirmarDeletar = false">
-            Cancelar
+        <div class="flex justify-end gap-2">
+          <Button type="button" variant="outline" @click="showAdicionarBibliotecario = false">Cancelar</Button>
+          <Button :disabled="!usuarioSelecionado" :loading="adicionandoBibliotecario" @click="adicionarBibliotecario">
+            Adicionar
           </Button>
+        </div>
+      </div>
+    </Modal>
+
+    <Modal :show="showConfirmarDeletar" title="Confirmar exclusão" @close="showConfirmarDeletar = false">
+      <div v-if="bibliotecaParaDeletar" class="space-y-4">
+        <p class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+          Remover <strong>{{ bibliotecaParaDeletar.nome }}</strong>? Esta ação não pode ser anulada. Só é permitido se
+          não existirem fichas associadas.
+        </p>
+        <div class="flex justify-end gap-2">
+          <Button type="button" variant="outline" @click="showConfirmarDeletar = false">Cancelar</Button>
           <Button
-            @click="deletarBiblioteca"
+            class="bg-red-600 text-white hover:bg-red-700"
             :loading="deletandoBiblioteca"
-            class="bg-red-600 hover:bg-red-700 text-white"
+            @click="deletarBiblioteca"
           >
-            <ion-icon name="trash-outline"></ion-icon>
-            Deletar
+            Excluir
           </Button>
         </div>
       </div>
@@ -278,29 +223,28 @@ import Table from '../components/UI/Table.vue'
 import Button from '../components/UI/Button.vue'
 import Input from '../components/UI/Input.vue'
 import Modal from '../components/UI/Modal.vue'
+import Drawer from '../components/UI/Drawer.vue'
 import api from '../services/api'
 import { notifyError, notifySuccess } from '../services/toast'
 
 const bibliotecas = ref([])
 const loading = ref(false)
+const drawerOpen = ref(false)
+const drawerTab = ref('dados')
+const bibliotecaAtiva = ref(null)
+const editForm = ref({ nome: '', campus: '' })
+
 const showNovaBiblioteca = ref(false)
 const criandoBiblioteca = ref(false)
-const novaBiblioteca = ref({
-  nome: '',
-  campus: ''
-})
+const novaBiblioteca = ref({ nome: '', campus: '' })
+
 const showAdicionarBibliotecario = ref(false)
 const bibliotecaSelecionada = ref(null)
 const usuarioSelecionado = ref('')
 const usuariosDisponiveis = ref([])
 const loadingUsuariosParaAdicionar = ref(false)
 const adicionandoBibliotecario = ref(false)
-const showDetalhes = ref(false)
-const showEditar = ref(false)
-const showBibliotecarios = ref(false)
-const bibliotecaParaEditar = ref(null)
-const bibliotecaParaDetalhes = ref(null)
-const bibliotecaParaBibliotecarios = ref(null)
+
 const bibliotecariosDaBiblioteca = ref([])
 const loadingBibliotecarios = ref(false)
 const editandoBiblioteca = ref(false)
@@ -311,19 +255,58 @@ const showConfirmarDeletar = ref(false)
 const columns = [
   { key: 'nome', label: 'Nome' },
   { key: 'campus', label: 'Campus' },
-  { key: 'data_criacao', label: 'Data de Criação' },
+  { key: 'data_criacao', label: 'Criação' },
   { key: 'acoes', label: 'Ações' }
 ]
+
+const labelTipo = (t) => {
+  if (t === 'admin') return 'Admin'
+  if (t === 'bibliotecario') return 'Bibliotecário'
+  return 'Utilizador'
+}
 
 const carregarBibliotecas = async () => {
   loading.value = true
   try {
     const response = await api.get('/api/admin/bibliotecas')
     bibliotecas.value = response.data
-  } catch (error) {
+  } catch {
+    notifyError('Não foi possível carregar as bibliotecas.')
   } finally {
     loading.value = false
   }
+}
+
+const abrirDrawer = (item) => {
+  bibliotecaAtiva.value = item
+  editForm.value = { nome: item.nome, campus: item.campus }
+  drawerTab.value = 'dados'
+  drawerOpen.value = true
+  bibliotecariosDaBiblioteca.value = []
+}
+
+const fecharDrawer = () => {
+  drawerOpen.value = false
+  bibliotecaAtiva.value = null
+}
+
+const carregarBibliotecarios = async () => {
+  if (!bibliotecaAtiva.value) return
+  loadingBibliotecarios.value = true
+  try {
+    const response = await api.get(`/api/admin/bibliotecas/${bibliotecaAtiva.value.id}/bibliotecarios`)
+    bibliotecariosDaBiblioteca.value = response.data
+  } catch {
+    notifyError('Erro ao carregar bibliotecários.')
+    bibliotecariosDaBiblioteca.value = []
+  } finally {
+    loadingBibliotecarios.value = false
+  }
+}
+
+const abrirTabBibliotecarios = () => {
+  drawerTab.value = 'bibliotecarios'
+  carregarBibliotecarios()
 }
 
 const criarBiblioteca = async () => {
@@ -333,140 +316,102 @@ const criarBiblioteca = async () => {
     showNovaBiblioteca.value = false
     novaBiblioteca.value = { nome: '', campus: '' }
     await carregarBibliotecas()
-  } catch (error) {
-    notifyError('Erro ao criar biblioteca. Tente novamente.')
+    notifySuccess('Biblioteca criada.')
+  } catch {
+    notifyError('Erro ao criar biblioteca.')
   } finally {
     criandoBiblioteca.value = false
+  }
+}
+
+const salvarEdicao = async () => {
+  if (!bibliotecaAtiva.value) return
+  editandoBiblioteca.value = true
+  try {
+    await api.patch(`/api/admin/bibliotecas/${bibliotecaAtiva.value.id}`, {
+      nome: editForm.value.nome,
+      campus: editForm.value.campus
+    })
+    await carregarBibliotecas()
+    const atual = bibliotecas.value.find((b) => b.id === bibliotecaAtiva.value.id)
+    if (atual) {
+      bibliotecaAtiva.value = atual
+      editForm.value = { nome: atual.nome, campus: atual.campus }
+    }
+    notifySuccess('Biblioteca atualizada.')
+  } catch (error) {
+    notifyError(error.response?.data?.detail || 'Erro ao guardar.')
+  } finally {
+    editandoBiblioteca.value = false
   }
 }
 
 const abrirModalAdicionarBibliotecario = async (biblioteca) => {
   bibliotecaSelecionada.value = biblioteca
   usuarioSelecionado.value = ''
-  showBibliotecarios.value = false
   showAdicionarBibliotecario.value = true
   loadingUsuariosParaAdicionar.value = true
-  
   try {
     const response = await api.get('/api/admin/usuarios')
     usuariosDisponiveis.value = response.data
-  } catch (error) {
-    notifyError('Erro ao carregar usuários. Tente novamente.')
+  } catch {
+    notifyError('Erro ao carregar utilizadores.')
   } finally {
     loadingUsuariosParaAdicionar.value = false
   }
 }
 
 const adicionarBibliotecario = async () => {
-  if (!usuarioSelecionado.value || !bibliotecaSelecionada.value) {
-    return
-  }
-  
+  if (!usuarioSelecionado.value || !bibliotecaSelecionada.value) return
   adicionandoBibliotecario.value = true
   try {
     await api.post('/api/admin/bibliotecas/adicionar-bibliotecario', {
       usuario_id: usuarioSelecionado.value,
       biblioteca_id: bibliotecaSelecionada.value.id
     })
-    
     showAdicionarBibliotecario.value = false
-    const bibliotecaId = bibliotecaSelecionada.value.id
     bibliotecaSelecionada.value = null
     usuarioSelecionado.value = ''
-    
-    notifySuccess('Bibliotecário adicionado com sucesso! O tipo do usuário foi alterado para "Bibliotecário".')
-    
-    if (bibliotecaParaBibliotecarios.value && bibliotecaParaBibliotecarios.value.id === bibliotecaId) {
-      await verBibliotecarios(bibliotecaParaBibliotecarios.value)
-    }
+    notifySuccess('Bibliotecário adicionado.')
+    if (drawerOpen.value && bibliotecaAtiva.value) await carregarBibliotecarios()
+    await carregarBibliotecas()
   } catch (error) {
-    const errorMsg = error.response?.data?.detail || 'Erro ao adicionar bibliotecário. Tente novamente.'
-    notifyError(errorMsg)
+    notifyError(error.response?.data?.detail || 'Erro ao adicionar.')
   } finally {
     adicionandoBibliotecario.value = false
   }
 }
 
-const verDetalhes = (biblioteca) => {
-  bibliotecaParaDetalhes.value = biblioteca
-  showDetalhes.value = true
-}
-
-const editarBiblioteca = (biblioteca) => {
-  bibliotecaParaEditar.value = { ...biblioteca }
-  showEditar.value = true
-}
-
-const salvarEdicao = async () => {
-  if (!bibliotecaParaEditar.value) return
-  
-  editandoBiblioteca.value = true
-  try {
-    await api.patch(`/api/admin/bibliotecas/${bibliotecaParaEditar.value.id}`, {
-      nome: bibliotecaParaEditar.value.nome,
-      campus: bibliotecaParaEditar.value.campus
-    })
-    
-    showEditar.value = false
-    bibliotecaParaEditar.value = null
-    await carregarBibliotecas()
-    notifySuccess('Biblioteca atualizada com sucesso!')
-  } catch (error) {
-    const errorMsg = error.response?.data?.detail || 'Erro ao editar biblioteca. Tente novamente.'
-    notifyError(errorMsg)
-  } finally {
-    editandoBiblioteca.value = false
-  }
-}
-
-const verBibliotecarios = async (biblioteca) => {
-  bibliotecaParaBibliotecarios.value = biblioteca
-  showBibliotecarios.value = true
-  loadingBibliotecarios.value = true
-  
-  try {
-    const response = await api.get(`/api/admin/bibliotecas/${biblioteca.id}/bibliotecarios`)
-    bibliotecariosDaBiblioteca.value = response.data
-  } catch (error) {
-    notifyError('Erro ao carregar bibliotecários. Tente novamente.')
-  } finally {
-    loadingBibliotecarios.value = false
-  }
-}
-
 const removerBibliotecario = async (usuarioId) => {
-  if (!confirm('Tem certeza que deseja remover este bibliotecário da biblioteca?')) {
-    return
-  }
-  
+  if (!bibliotecaAtiva.value) return
+  if (!confirm('Remover este bibliotecário desta biblioteca?')) return
   try {
-    await api.delete(`/api/admin/bibliotecas/${bibliotecaParaBibliotecarios.value.id}/bibliotecarios/${usuarioId}`)
-    await verBibliotecarios(bibliotecaParaBibliotecarios.value)
-    notifySuccess('Bibliotecário removido com sucesso!')
+    await api.delete(`/api/admin/bibliotecas/${bibliotecaAtiva.value.id}/bibliotecarios/${usuarioId}`)
+    await carregarBibliotecarios()
+    notifySuccess('Removido.')
   } catch (error) {
-    const errorMsg = error.response?.data?.detail || 'Erro ao remover bibliotecário. Tente novamente.'
-    notifyError(errorMsg)
+    notifyError(error.response?.data?.detail || 'Erro ao remover.')
   }
 }
 
-const confirmarDeletar = (biblioteca) => {
-  bibliotecaParaDeletar.value = biblioteca
+const confirmarDeletar = () => {
+  if (!bibliotecaAtiva.value) return
+  bibliotecaParaDeletar.value = bibliotecaAtiva.value
   showConfirmarDeletar.value = true
 }
 
 const deletarBiblioteca = async () => {
   if (!bibliotecaParaDeletar.value) return
-  
   deletandoBiblioteca.value = true
   try {
     await api.delete(`/api/admin/bibliotecas/${bibliotecaParaDeletar.value.id}`)
     showConfirmarDeletar.value = false
     bibliotecaParaDeletar.value = null
+    fecharDrawer()
     await carregarBibliotecas()
-    notifySuccess('Biblioteca deletada com sucesso!')
+    notifySuccess('Biblioteca excluída.')
   } catch (error) {
-    const errorMsg = error.response?.data?.detail || 'Erro ao deletar biblioteca. Tente novamente.'
-    notifyError(errorMsg)
+    notifyError(error.response?.data?.detail || 'Não foi possível excluir.')
   } finally {
     deletandoBiblioteca.value = false
   }
@@ -476,4 +421,3 @@ onMounted(() => {
   carregarBibliotecas()
 })
 </script>
-

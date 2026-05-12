@@ -49,25 +49,28 @@ export const routes = [
     path: '/admin',
     name: 'Admin',
     component: () => import('../views/Admin.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/admin/usuarios',
-    name: 'AdminUsuarios',
-    component: () => import('../views/AdminUsuarios.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/admin/fichas',
-    name: 'AdminFichas',
-    component: () => import('../views/AdminFichas.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
-    path: '/admin/bibliotecas',
-    name: 'AdminBibliotecas',
-    component: () => import('../views/AdminBibliotecas.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
+    meta: { requiresAuth: true, requiresAdmin: true },
+    redirect: '/admin/usuarios',
+    children: [
+      {
+        path: 'usuarios',
+        name: 'AdminUsuarios',
+        component: () => import('../views/AdminUsuarios.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
+      },
+      {
+        path: 'fichas',
+        name: 'AdminFichas',
+        component: () => import('../views/AdminFichas.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
+      },
+      {
+        path: 'bibliotecas',
+        name: 'AdminBibliotecas',
+        component: () => import('../views/AdminBibliotecas.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
+      }
+    ]
   },
   {
     path: '/bibliotecario',

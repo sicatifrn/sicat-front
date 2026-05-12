@@ -4,46 +4,157 @@
       :columns="columns"
       :items="fichas"
       :loading="loading"
-      loading-text="Carregando fichas..."
+      loading-text="A carregar fichas…"
       empty-text="Nenhuma ficha encontrada"
       empty-icon="document-text-outline"
     >
       <template #cell-biblioteca="{ item }">
-        <span class="text-sm text-gray-700">
-          {{ item.biblioteca_nome || '-' }}
-        </span>
+        <span class="text-sm text-muted-800">{{ item.biblioteca_nome || '—' }}</span>
       </template>
 
       <template #cell-status="{ item }">
-        <span :class="[
-          'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full',
-          item.status === 'aprovado' ? 'bg-green-100 text-green-800' :
-          item.status === 'negado' ? 'bg-red-100 text-red-800' :
-          'bg-yellow-100 text-yellow-800'
-        ]">
-          <ion-icon :name="item.status === 'aprovado' ? 'checkmark-circle' : item.status === 'negado' ? 'close-circle' : 'time'" class="text-sm"></ion-icon>
-          {{ item.status === 'aprovado' ? 'Aprovado' : item.status === 'negado' ? 'Negado' : 'Aguardando' }}
+        <span
+          :class="[
+            'inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium',
+            item.status === 'aprovado'
+              ? 'bg-green-100 text-green-800'
+              : item.status === 'negado'
+                ? 'bg-red-100 text-red-800'
+                : 'bg-amber-100 text-amber-900'
+          ]"
+        >
+          <ion-icon
+            :name="
+              item.status === 'aprovado'
+                ? 'checkmark-circle'
+                : item.status === 'negado'
+                  ? 'close-circle'
+                  : 'time-outline'
+            "
+            class="text-sm"
+          ></ion-icon>
+          {{
+            item.status === 'aprovado'
+              ? 'Aprovado'
+              : item.status === 'negado'
+                ? 'Negado'
+                : 'Aguardando'
+          }}
         </span>
       </template>
+
+      <template #cell-acoes="{ item }">
+        <Button size="sm" variant="outline" class="gap-1.5 font-semibold" @click="abrirDrawer(item)">
+          Ver mais
+          <ion-icon name="chevron-forward-outline" class="text-base"></ion-icon>
+        </Button>
+      </template>
     </Table>
+
+    <Drawer
+      :show="!!fichaDrawer"
+      :title="fichaDrawer?.titulo || 'Ficha'"
+      :subtitle="fichaDrawer ? `ID ${fichaDrawer.id_curto} · ${fichaDrawer.biblioteca_nome || '—'}` : ''"
+      wide
+      @close="fichaDrawer = null"
+    >
+      <div v-if="fichaDrawer" class="space-y-6">
+        <div class="flex flex-wrap gap-2">
+          <span
+            :class="[
+              'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold',
+              fichaDrawer.status === 'aprovado'
+                ? 'bg-green-100 text-green-800'
+                : fichaDrawer.status === 'negado'
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-amber-100 text-amber-900'
+            ]"
+          >
+            {{ labelStatus(fichaDrawer.status) }}
+          </span>
+        </div>
+
+        <dl class="grid gap-3 text-sm sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <dt class="font-semibold text-muted-500">Autor</dt>
+            <dd class="mt-0.5 text-muted-900">{{ fichaDrawer.autor_nome_completo }}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-muted-500">Curso</dt>
+            <dd class="mt-0.5 text-muted-900">{{ fichaDrawer.curso }}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-muted-500">Campus (ficha)</dt>
+            <dd class="mt-0.5 text-muted-900">{{ fichaDrawer.campus }}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-muted-500">Tipo de trabalho</dt>
+            <dd class="mt-0.5 text-muted-900">{{ fichaDrawer.tipo_trabalho }}</dd>
+          </div>
+          <div>
+            <dt class="font-semibold text-muted-500">Data</dt>
+            <dd class="mt-0.5 text-muted-900">
+              {{ fichaDrawer.data_dia }}/{{ fichaDrawer.data_mes }}/{{ fichaDrawer.data_ano }}
+            </dd>
+          </div>
+          <div class="sm:col-span-2">
+            <dt class="font-semibold text-muted-500">Palavras-chave</dt>
+            <dd class="mt-0.5 text-muted-900">{{ fichaDrawer.palavras_chave }}</dd>
+          </div>
+        </dl>
+
+        <div
+          v-if="fichaDrawer.status === 'aguardando_autorizacao'"
+          class="rounded-xl border border-amber-200 bg-amber-50/80 p-4"
+        >
+          <p class="mb-3 text-sm font-medium text-amber-950">Decisão de autorização</p>
+          <div class="flex flex-wrap gap-2">
+            <Button type="button" :loading="decidindo === 'sim'" @click="decidirFicha(true)">
+              Aprovar
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              class="border-red-300 text-red-800 hover:bg-red-50"
+              :loading="decidindo === 'nao'"
+              @click="decidirFicha(false)"
+            >
+              Negar
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Drawer>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import Table from '../components/UI/Table.vue'
+import Button from '../components/UI/Button.vue'
+import Drawer from '../components/UI/Drawer.vue'
 import api from '../services/api'
+import { notifyError, notifySuccess } from '../services/toast'
 
 const fichas = ref([])
 const loading = ref(false)
+const fichaDrawer = ref(null)
+const decidindo = ref(null)
 
 const columns = [
   { key: 'titulo', label: 'Título' },
   { key: 'id_curto', label: 'ID' },
   { key: 'autor_nome_completo', label: 'Autor' },
   { key: 'biblioteca', label: 'Biblioteca' },
-  { key: 'status', label: 'Status' }
+  { key: 'status', label: 'Estado' },
+  { key: 'acoes', label: 'Ações' }
 ]
+
+const labelStatus = (s) => {
+  if (s === 'aprovado') return 'Aprovado'
+  if (s === 'negado') return 'Negado'
+  return 'Aguardando autorização'
+}
 
 const carregarFichas = async () => {
   loading.value = true
@@ -56,17 +167,39 @@ const carregarFichas = async () => {
     const bibliotecasMap = new Map(
       (bibliotecasResp.data || []).map((biblioteca) => [
         biblioteca.id,
-        `${biblioteca.nome} - ${biblioteca.campus}`
+        `${biblioteca.nome} — ${biblioteca.campus}`
       ])
     )
 
     fichas.value = (fichasResp.data || []).map((ficha) => ({
       ...ficha,
-      biblioteca_nome: bibliotecasMap.get(ficha.biblioteca_id) || '-'
+      biblioteca_nome: bibliotecasMap.get(ficha.biblioteca_id) || '—'
     }))
-  } catch (error) {
+  } catch {
+    notifyError('Não foi possível carregar as fichas.')
   } finally {
     loading.value = false
+  }
+}
+
+const abrirDrawer = (item) => {
+  fichaDrawer.value = { ...item }
+}
+
+const decidirFicha = async (aprovado) => {
+  if (!fichaDrawer.value) return
+  decidindo.value = aprovado ? 'sim' : 'nao'
+  try {
+    await api.post(`/api/admin/fichas/${fichaDrawer.value.id}/aprovacao`, { aprovado })
+    notifySuccess(aprovado ? 'Ficha aprovada.' : 'Ficha negada.')
+    await carregarFichas()
+    const atual = fichas.value.find((f) => f.id === fichaDrawer.value.id)
+    fichaDrawer.value = atual ? { ...atual } : null
+  } catch (error) {
+    const msg = error.response?.data?.detail || 'Erro ao atualizar a ficha.'
+    notifyError(msg)
+  } finally {
+    decidindo.value = null
   }
 }
 
@@ -74,5 +207,3 @@ onMounted(() => {
   carregarFichas()
 })
 </script>
-
-

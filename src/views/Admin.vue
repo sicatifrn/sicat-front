@@ -1,71 +1,69 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-6">
-      <h1 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-        <ion-icon name="settings-outline" class="text-brand-600"></ion-icon>
-        Administração
-      </h1>
-      <p class="text-gray-600">Painel de administração do sistema</p>
-    </div>
+  <div class="min-h-0 flex-1">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <header class="mb-8 border-b border-muted-200 pb-6">
+        <h1 class="mb-1 flex items-center gap-2 text-2xl font-bold tracking-tight text-muted-900">
+          <ion-icon name="settings-outline" class="text-brand-600"></ion-icon>
+          Administração
+        </h1>
+        <p class="text-sm text-muted-600">
+          Gestão de utilizadores, fichas catalográficas e bibliotecas.
+        </p>
+      </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-[220px,1fr] gap-6 items-start">
-      <nav class="bg-cream-50 border border-muted-100 rounded-xl p-3 space-y-2 lg:sticky lg:top-6 shadow-sm">
-        <button
-          @click="handleTabChange('usuarios')"
-          :class="[
-            'w-full px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center',
-            activeTab === 'usuarios'
-              ? 'bg-brand-100 text-brand-700'
-              : 'text-muted-500 hover:bg-brand-50/60 hover:text-muted-800'
-          ]"
+      <nav
+        class="mb-8 flex flex-wrap gap-1 rounded-2xl border border-muted-200 bg-cream-50/80 p-1 shadow-sm"
+        aria-label="Secções do painel admin"
+      >
+        <router-link
+          v-for="tab in tabs"
+          :key="tab.to"
+          :to="tab.to"
+          class="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all sm:flex-none sm:justify-start"
+          :class="
+            isActive(tab)
+              ? 'bg-white text-brand-800 shadow-sm ring-1 ring-muted-200'
+              : 'text-muted-600 hover:bg-white/60 hover:text-muted-900'
+          "
         >
-          <ion-icon name="people-outline" class="text-base mr-2"></ion-icon>
-          Usuários
-        </button>
-        <button
-          @click="handleTabChange('fichas')"
-          :class="[
-            'w-full px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center',
-            activeTab === 'fichas'
-              ? 'bg-brand-100 text-brand-700'
-              : 'text-muted-500 hover:bg-brand-50/60 hover:text-muted-800'
-          ]"
-        >
-          <ion-icon name="document-text-outline" class="text-base mr-2"></ion-icon>
-          Fichas
-        </button>
-        <button
-          @click="handleTabChange('bibliotecas')"
-          :class="[
-            'w-full px-3 py-2 rounded-lg font-medium text-sm transition-colors flex items-center',
-            activeTab === 'bibliotecas'
-              ? 'bg-brand-100 text-brand-700'
-              : 'text-muted-500 hover:bg-brand-50/60 hover:text-muted-800'
-          ]"
-        >
-          <ion-icon name="library-outline" class="text-base mr-2"></ion-icon>
-          Bibliotecas
-        </button>
+          <ion-icon :name="tab.icon" class="text-lg shrink-0"></ion-icon>
+          <span>{{ tab.label }}</span>
+        </router-link>
       </nav>
 
-      <AdminUsuarios v-if="activeTab === 'usuarios'" />
-
-      <AdminFichas v-else-if="activeTab === 'fichas'" />
-
-      <AdminBibliotecas v-else-if="activeTab === 'bibliotecas'" />
+      <div class="rounded-2xl border border-muted-100 bg-white/90 p-5 shadow-sm sm:p-6">
+        <router-view v-slot="{ Component }">
+          <Transition name="fade-tab" mode="out-in">
+            <component :is="Component" />
+          </Transition>
+        </router-view>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import AdminUsuarios from './AdminUsuarios.vue'
-import AdminFichas from './AdminFichas.vue'
-import AdminBibliotecas from './AdminBibliotecas.vue'
+import { useRoute } from 'vue-router'
 
-const activeTab = ref('usuarios')
+const route = useRoute()
 
-const handleTabChange = (tab) => {
-  activeTab.value = tab
-}
+const tabs = [
+  { to: '/admin/usuarios', label: 'Utilizadores', icon: 'people-outline' },
+  { to: '/admin/fichas', label: 'Fichas', icon: 'document-text-outline' },
+  { to: '/admin/bibliotecas', label: 'Bibliotecas', icon: 'library-outline' }
+]
+
+const isActive = (tab) => route.path === tab.to
 </script>
+
+<style scoped>
+.fade-tab-enter-active,
+.fade-tab-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.fade-tab-enter-from,
+.fade-tab-leave-to {
+  opacity: 0;
+  transform: translateY(4px);
+}
+</style>
