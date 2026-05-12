@@ -154,6 +154,21 @@
           required
           :error="errors.confirmar_senha"
         />
+        <div
+          v-if="form.nova_senha && form.confirmar_senha"
+          class="flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium"
+          :class="
+            passwordsCoincidem
+              ? 'border-green-200 bg-green-50 text-green-800'
+              : 'border-red-200 bg-red-50 text-red-800'
+          "
+        >
+          <ion-icon
+            :name="passwordsCoincidem ? 'checkmark-circle' : 'close-circle-outline'"
+            class="text-lg shrink-0"
+          ></ion-icon>
+          <span>{{ passwordsCoincidem ? 'Senhas coincidem' : 'As senhas não coincidem' }}</span>
+        </div>
          <div v-if="error" class="p-3 rounded-lg bg-red-50 border border-red-200">
           <p class="text-red-600 text-sm flex items-center gap-2">
             <ion-icon name="alert-circle-outline"></ion-icon>
@@ -268,6 +283,10 @@ const passwordChecks = computed(() => {
     }
   }
 })
+
+const passwordsCoincidem = computed(
+  () => form.value.nova_senha === form.value.confirmar_senha && form.value.confirmar_senha.length > 0
+)
 
 const validateStep1 = () => {
   errors.value = {}

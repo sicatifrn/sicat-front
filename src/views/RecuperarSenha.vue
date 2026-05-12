@@ -86,6 +86,21 @@
               required
               :error="errors.confirmar_senha"
             />
+            <div
+              v-if="form.nova_senha && form.confirmar_senha"
+              class="flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium"
+              :class="
+                passwordsCoincidem
+                  ? 'border-green-200 bg-green-50 text-green-800'
+                  : 'border-red-200 bg-red-50 text-red-800'
+              "
+            >
+              <ion-icon
+                :name="passwordsCoincidem ? 'checkmark-circle' : 'close-circle-outline'"
+                class="text-lg shrink-0"
+              ></ion-icon>
+              <span>{{ passwordsCoincidem ? 'Senhas coincidem' : 'As senhas não coincidem' }}</span>
+            </div>
           </div>
 
           <div v-if="error" class="mt-4 p-3 rounded-lg bg-red-50 border border-red-200">
@@ -170,6 +185,10 @@ const stepSubtitle = computed(() => {
   if (currentStep.value === 2) return 'Confira as informações antes de continuar'
   return 'Defina sua nova senha de acesso ao SICAT'
 })
+
+const passwordsCoincidem = computed(
+  () => form.value.nova_senha === form.value.confirmar_senha && form.value.confirmar_senha.length > 0
+)
 
 const handleValidar = async () => {
   errors.value = {}

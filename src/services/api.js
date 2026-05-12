@@ -1,8 +1,11 @@
 import axios from 'axios'
+import { setApiBaseUrlResolved, pushApiLog } from './apiDebug'
 
-const API_BASE_URL =
+export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'https://sicat.fluxomed.com'
 const SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
+
+setApiBaseUrlResolved(API_BASE_URL)
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -17,6 +20,34 @@ const suapApi = axios.create({
     'Content-Type': 'application/json'
   }
 })
+
+function attachResponseLog(axiosInstance, source) {
+  axiosInstance.interceptors.response.use(
+    (response) => {
+      pushApiLog({
+        source,
+        method: (response.config.method || 'get').toUpperCase(),
+        path: response.config.url || '',
+        status: response.status,
+        ok: true
+      })
+      return response
+    },
+    (error) => {
+      const c = error.config
+      pushApiLog({
+        source,
+        method: (c?.method || 'get').toString().toUpperCase(),
+        path: c?.url || '',
+        status: error.response?.status ?? '—',
+        ok: false
+      })
+      return Promise.reject(error)
+    }
+  )
+}
+
+attachResponseLog(suapApi, 'suap')
 
 api.interceptors.request.use(
   (config) => {
@@ -35,8 +66,25 @@ api.interceptors.request.use(
 )
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    pushApiLog({
+      source: 'sicat',
+      method: (response.config.method || 'get').toUpperCase(),
+      path: response.config.url || '',
+      status: response.status,
+      ok: true
+    })
+    return response
+  },
   async (error) => {
+    const c = error.config
+    pushApiLog({
+      source: 'sicat',
+      method: (c?.method || 'get').toString().toUpperCase(),
+      path: c?.url || '',
+      status: error.response?.status ?? '—',
+      ok: false
+    })
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
