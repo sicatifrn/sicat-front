@@ -347,6 +347,7 @@ const salvarEdicao = async () => {
 }
 
 const abrirModalAdicionarBibliotecario = async (biblioteca) => {
+  fecharDrawer()
   bibliotecaSelecionada.value = biblioteca
   usuarioSelecionado.value = ''
   showAdicionarBibliotecario.value = true
@@ -398,6 +399,7 @@ const confirmarDeletar = () => {
   if (!bibliotecaAtiva.value) return
   bibliotecaParaDeletar.value = bibliotecaAtiva.value
   showConfirmarDeletar.value = true
+  fecharDrawer()
 }
 
 const deletarBiblioteca = async () => {
