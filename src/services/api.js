@@ -1,11 +1,8 @@
 import axios from 'axios'
-import { setApiBaseUrlResolved, pushApiLog } from './apiDebug'
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'https://sicat.fluxomed.com'
 const SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
-
-setApiBaseUrlResolved(API_BASE_URL)
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -20,34 +17,6 @@ const suapApi = axios.create({
     'Content-Type': 'application/json'
   }
 })
-
-function attachResponseLog(axiosInstance, source) {
-  axiosInstance.interceptors.response.use(
-    (response) => {
-      pushApiLog({
-        source,
-        method: (response.config.method || 'get').toUpperCase(),
-        path: response.config.url || '',
-        status: response.status,
-        ok: true
-      })
-      return response
-    },
-    (error) => {
-      const c = error.config
-      pushApiLog({
-        source,
-        method: (c?.method || 'get').toString().toUpperCase(),
-        path: c?.url || '',
-        status: error.response?.status ?? '—',
-        ok: false
-      })
-      return Promise.reject(error)
-    }
-  )
-}
-
-attachResponseLog(suapApi, 'suap')
 
 api.interceptors.request.use(
   (config) => {
@@ -66,25 +35,8 @@ api.interceptors.request.use(
 )
 
 api.interceptors.response.use(
-  (response) => {
-    pushApiLog({
-      source: 'sicat',
-      method: (response.config.method || 'get').toUpperCase(),
-      path: response.config.url || '',
-      status: response.status,
-      ok: true
-    })
-    return response
-  },
+  (response) => response,
   async (error) => {
-    const c = error.config
-    pushApiLog({
-      source: 'sicat',
-      method: (c?.method || 'get').toString().toUpperCase(),
-      path: c?.url || '',
-      status: error.response?.status ?? '—',
-      ok: false
-    })
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
@@ -106,22 +58,22 @@ export const authAPI = {
     })
     return response.data
   },
-  
+
   validateSuap: async (matricula, senha_suap) => {
     try {
       const tokenResponse = await suapApi.post('/token/pair', {
         username: matricula,
         password: senha_suap
       })
-      
+
       const { access } = tokenResponse.data
-      
+
       const userResponse = await suapApi.get('/rh/eu/', {
         headers: {
-          'Authorization': `Bearer ${access}`
+          Authorization: `Bearer ${access}`
         }
       })
-      
+
       return {
         valido: true,
         token: access,
@@ -134,7 +86,7 @@ export const authAPI = {
       throw error
     }
   },
-  
+
   register: async (matricula, senha_suap, nova_senha, confirmar_senha) => {
     const response = await api.post('/api/auth/registro', {
       matricula,
@@ -154,7 +106,7 @@ export const authAPI = {
     })
     return response.data
   },
-  
+
   getMe: async () => {
     const response = await api.get('/api/auth/perfil')
     return response.data
@@ -162,4 +114,3 @@ export const authAPI = {
 }
 
 export default api
-
