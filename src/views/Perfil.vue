@@ -98,6 +98,14 @@
 
       <Card>
         <div class="space-y-4">
+          <div class="rounded-xl border border-muted-100 bg-cream-50 p-4">
+            <p class="text-sm font-semibold text-gray-900 mb-1">Acessibilidade</p>
+            <p class="text-sm text-gray-600 mb-3">
+              Ative ou desative o modo de alto contraste para melhorar a leitura do sistema.
+            </p>
+            <AccessibilityToggle size="md" />
+          </div>
+
           <div class="flex items-center gap-3 pb-4 border-b border-gray-200">
             <div class="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center">
               <ion-icon name="person-outline" class="text-3xl text-brand-600"></ion-icon>
@@ -124,6 +132,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { authAPI } from '../services/api'
+import AccessibilityToggle from '../components/AccessibilityToggle.vue'
 import Card from '../components/UI/Card.vue'
 import Button from '../components/UI/Button.vue'
 import Modal from '../components/UI/Modal.vue'

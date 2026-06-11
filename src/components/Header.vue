@@ -92,6 +92,7 @@
           </router-link>
         </div>
         <div v-else class="flex items-center gap-2 flex-shrink-0">
+          <AccessibilityToggle />
           <router-link to="/register" custom v-slot="{ navigate, isActive }">
             <Button
               type="button"
@@ -125,6 +126,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import AccessibilityToggle from './AccessibilityToggle.vue'
 import Button from './UI/Button.vue'
 
 const route = useRoute()

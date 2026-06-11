@@ -37,3 +37,74 @@ body {
   color: var(--color-muted-800);
   font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
+
+html.high-contrast,
+html.high-contrast body {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+html.high-contrast body *:not([vw]):not([vw] *):not(.vw-plugin-wrapper):not(.vw-plugin-wrapper *) {
+  border-color: #ffeb3b !important;
+  box-shadow: none !important;
+}
+
+html.high-contrast header,
+html.high-contrast aside,
+html.high-contrast main,
+html.high-contrast footer,
+html.high-contrast section,
+html.high-contrast article,
+html.high-contrast div:not([vw]):not([vw] *):not(.vw-plugin-wrapper):not(.vw-plugin-wrapper *),
+html.high-contrast form {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+html.high-contrast p,
+html.high-contrast span,
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast h4,
+html.high-contrast label,
+html.high-contrast dt,
+html.high-contrast dd,
+html.high-contrast li,
+html.high-contrast ion-icon {
+  color: #fff !important;
+}
+
+html.high-contrast a,
+html.high-contrast button {
+  background-color: #000 !important;
+  border-color: #ffeb3b !important;
+  color: #ffeb3b !important;
+}
+
+html.high-contrast a:hover,
+html.high-contrast button:hover,
+html.high-contrast a:focus-visible,
+html.high-contrast button:focus-visible {
+  background-color: #1f1f00 !important;
+  color: #fff36d !important;
+  outline: 2px solid #ffeb3b !important;
+  outline-offset: 2px;
+}
+
+html.high-contrast input,
+html.high-contrast textarea,
+html.high-contrast select {
+  background-color: #000 !important;
+  border-color: #ffeb3b !important;
+  color: #fff !important;
+}
+
+html.high-contrast input::placeholder,
+html.high-contrast textarea::placeholder {
+  color: #d6d6d6 !important;
+}
+
+html.high-contrast img {
+  filter: contrast(1.2);
+}
