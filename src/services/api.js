@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://sicat.ifrn.edu.br/api'
+const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''
 export const API_BASE_URL = rawApiBaseUrl.replace(/\/+$/, '')
 const SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
 
@@ -20,7 +20,7 @@ const suapApi = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const basePath = new URL(API_BASE_URL, window.location.origin).pathname.replace(/\/+$/, '')
+    const basePath = new URL(API_BASE_URL || '/', window.location.origin).pathname.replace(/\/+$/, '')
     if (basePath.endsWith('/api') && typeof config.url === 'string' && config.url.startsWith('/api/')) {
       config.url = config.url.replace(/^\/api/, '')
     }
