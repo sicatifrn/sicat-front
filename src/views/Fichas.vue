@@ -60,6 +60,10 @@
               <ion-icon name="calendar-outline" class="text-gray-400"></ion-icon>
               <span>{{ new Date(ficha.data_criacao).toLocaleDateString('pt-BR') }}</span>
             </div>
+            <div v-if="ficha.revisor_nome" class="flex items-center gap-2 text-gray-600">
+              <ion-icon name="library-outline" class="text-gray-400"></ion-icon>
+              <span class="truncate">Revisada por {{ ficha.revisor_nome }}</span>
+            </div>
           </div>
           
           <div class="pt-3 border-t border-gray-200 flex items-center justify-between">

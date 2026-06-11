@@ -151,6 +151,10 @@
                 <label class="block text-xs font-medium text-gray-500 mb-1">Palavras-chave</label>
                 <p class="text-gray-900">{{ solicitacaoSelecionada.palavras_chave }}</p>
               </div>
+              <div v-if="solicitacaoSelecionada.revisor_nome">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Revisada por</label>
+                <p class="text-gray-900">{{ solicitacaoSelecionada.revisor_nome }}</p>
+              </div>
             </div>
             <div class="pt-4 border-t border-gray-200 flex justify-end">
               <Button @click="verDetalhesCompletos">
@@ -201,6 +205,10 @@
           <div>
             <label class="block text-xs font-medium text-gray-500 mb-1">Tipo de Trabalho</label>
             <p class="text-gray-900">{{ modalVer.solicitacao.tipo_trabalho }}</p>
+          </div>
+          <div v-if="modalVer.solicitacao.revisor_nome">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Revisada por</label>
+            <p class="text-gray-900">{{ modalVer.solicitacao.revisor_nome }}</p>
           </div>
         </div>
 
@@ -274,7 +282,7 @@ import Button from '../components/UI/Button.vue'
 import Modal from '../components/UI/Modal.vue'
 import Card from '../components/UI/Card.vue'
 import api from '../services/api'
-import { notifyError, notifySuccess } from '../services/toast'
+import { notifyApiError, notifyError, notifySuccess } from '../services/toast'
 
 const router = useRouter()
 
@@ -392,8 +400,7 @@ const aprovarNegarModal = async (aprovado) => {
     
     notifySuccess(aprovado ? 'Ficha aprovada com sucesso!' : 'Ficha negada com sucesso!')
   } catch (error) {
-    const errorMsg = error.response?.data?.detail || 'Erro ao processar solicitação. Tente novamente.'
-    notifyError(errorMsg)
+    notifyApiError(error, 'Erro ao processar solicitação. Tente novamente.')
   } finally {
     processando.value = false
   }

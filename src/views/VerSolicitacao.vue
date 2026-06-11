@@ -106,6 +106,13 @@
                   }}
                 </span>
               </div>
+              <div v-if="solicitacao.revisor_nome">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Revisada por</label>
+                <p class="text-gray-900 font-medium">{{ solicitacao.revisor_nome }}</p>
+                <p v-if="solicitacao.data_revisao" class="text-xs text-gray-500">
+                  {{ new Date(solicitacao.data_revisao).toLocaleString('pt-BR') }}
+                </p>
+              </div>
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">Autor</label>
                 <p class="text-gray-900 font-medium">{{ solicitacao.autor_nome_completo }}</p>
@@ -150,6 +157,19 @@
                 <label class="block text-xs font-medium text-gray-500 mb-1">Coorientador</label>
                 <p class="text-gray-900 font-medium">{{ solicitacao.coorientador_nome_completo }}</p>
               </div>
+              <div v-if="logs.length">
+                <label class="block text-xs font-medium text-gray-500 mb-2">Histórico</label>
+                <div class="space-y-2">
+                  <div v-for="log in logs" :key="log.id" class="rounded-lg bg-gray-50 p-3">
+                    <p class="text-sm font-medium text-gray-900">
+                      {{ labelAcao(log.acao) }} por {{ log.usuario_nome || 'Usuário' }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                      {{ new Date(log.data_criacao).toLocaleString('pt-BR') }}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -188,12 +208,13 @@ import Card from '../components/UI/Card.vue'
 import Button from '../components/UI/Button.vue'
 import Modal from '../components/UI/Modal.vue'
 import api from '../services/api'
-import { notifyError, notifySuccess, notifyInfo } from '../services/toast'
+import { notifyApiError, notifyError, notifySuccess, notifyInfo } from '../services/toast'
 
 const router = useRouter()
 const route = useRoute()
 
 const solicitacao = ref(null)
+const logs = ref([])
 const pdfUrl = ref(null)
 const loading = ref(true)
 const processando = ref(false)
@@ -214,6 +235,8 @@ const carregarSolicitacao = async () => {
       router.push('/bibliotecario')
       return
     }
+
+    await carregarLogs(solicitacaoId)
     
     if (solicitacao.value.pdf_tcc) {
       try {
@@ -236,6 +259,21 @@ const carregarSolicitacao = async () => {
   }
 }
 
+const carregarLogs = async (solicitacaoId) => {
+  try {
+    const response = await api.get(`/api/bibliotecarios/solicitacoes/${solicitacaoId}/logs`)
+    logs.value = response.data || []
+  } catch {
+    logs.value = []
+  }
+}
+
+const labelAcao = (acao) => {
+  if (acao === 'aprovacao') return 'Aprovação'
+  if (acao === 'negacao') return 'Negação'
+  return 'Atualização'
+}
+
 const aprovarNegar = (aprovado) => {
   acaoConfirmar.value = aprovado ? 'aprovar' : 'negar'
   showConfirmModal.value = true
@@ -253,12 +291,12 @@ const confirmarAcao = async () => {
     })
     
     solicitacao.value = response.data.ficha
+    await carregarLogs(solicitacao.value.id)
     showConfirmModal.value = false
     
     notifySuccess(aprovado ? 'Ficha aprovada com sucesso!' : 'Ficha negada com sucesso!')
   } catch (error) {
-    const errorMsg = error.response?.data?.detail || 'Erro ao processar solicitação. Tente novamente.'
-    notifyError(errorMsg)
+    notifyApiError(error, 'Erro ao processar solicitação. Tente novamente.')
   } finally {
     processando.value = false
   }

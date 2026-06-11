@@ -97,11 +97,35 @@
               {{ fichaDrawer.data_dia }}/{{ fichaDrawer.data_mes }}/{{ fichaDrawer.data_ano }}
             </dd>
           </div>
+          <div v-if="fichaDrawer.revisor_nome">
+            <dt class="font-semibold text-muted-500">Revisada por</dt>
+            <dd class="mt-0.5 text-muted-900">{{ fichaDrawer.revisor_nome }}</dd>
+          </div>
+          <div v-if="fichaDrawer.data_revisao">
+            <dt class="font-semibold text-muted-500">Data da revisão</dt>
+            <dd class="mt-0.5 text-muted-900">
+              {{ new Date(fichaDrawer.data_revisao).toLocaleString('pt-BR') }}
+            </dd>
+          </div>
           <div class="sm:col-span-2">
             <dt class="font-semibold text-muted-500">Palavras-chave</dt>
             <dd class="mt-0.5 text-muted-900">{{ fichaDrawer.palavras_chave }}</dd>
           </div>
         </dl>
+
+        <div v-if="logsDrawer.length" class="rounded-xl border border-gray-200 p-4">
+          <p class="mb-3 text-sm font-semibold text-muted-900">Histórico</p>
+          <div class="space-y-3">
+            <div v-for="log in logsDrawer" :key="log.id" class="text-sm">
+              <p class="font-medium text-muted-900">
+                {{ labelAcao(log.acao) }} por {{ log.usuario_nome || 'Usuário' }}
+              </p>
+              <p class="text-xs text-muted-500">
+                {{ new Date(log.data_criacao).toLocaleString('pt-BR') }}
+              </p>
+            </div>
+          </div>
+        </div>
 
         <div
           v-if="fichaDrawer.status === 'aguardando_autorizacao'"
@@ -134,12 +158,13 @@ import Table from '../components/UI/Table.vue'
 import Button from '../components/UI/Button.vue'
 import Drawer from '../components/UI/Drawer.vue'
 import api from '../services/api'
-import { notifyError, notifySuccess } from '../services/toast'
+import { notifyApiError, notifyError, notifySuccess } from '../services/toast'
 
 const fichas = ref([])
 const loading = ref(false)
 const fichaDrawer = ref(null)
 const decidindo = ref(null)
+const logsDrawer = ref([])
 
 const columns = [
   { key: 'titulo', label: 'Título' },
@@ -154,6 +179,12 @@ const labelStatus = (s) => {
   if (s === 'aprovado') return 'Aprovado'
   if (s === 'negado') return 'Negado'
   return 'Aguardando autorização'
+}
+
+const labelAcao = (acao) => {
+  if (acao === 'aprovacao') return 'Aprovação'
+  if (acao === 'negacao') return 'Negação'
+  return 'Atualização'
 }
 
 const carregarFichas = async () => {
@@ -182,8 +213,15 @@ const carregarFichas = async () => {
   }
 }
 
-const abrirDrawer = (item) => {
+const abrirDrawer = async (item) => {
   fichaDrawer.value = { ...item }
+  logsDrawer.value = []
+  try {
+    const response = await api.get(`/api/admin/fichas/${item.id}/logs`)
+    logsDrawer.value = response.data || []
+  } catch {
+    logsDrawer.value = []
+  }
 }
 
 const decidirFicha = async (aprovado) => {
@@ -195,9 +233,12 @@ const decidirFicha = async (aprovado) => {
     await carregarFichas()
     const atual = fichas.value.find((f) => f.id === fichaDrawer.value.id)
     fichaDrawer.value = atual ? { ...atual } : null
+    if (fichaDrawer.value) {
+      const logsResponse = await api.get(`/api/admin/fichas/${fichaDrawer.value.id}/logs`)
+      logsDrawer.value = logsResponse.data || []
+    }
   } catch (error) {
-    const msg = error.response?.data?.detail || 'Erro ao atualizar a ficha.'
-    notifyError(msg)
+    notifyApiError(error, 'Erro ao atualizar a ficha.')
   } finally {
     decidindo.value = null
   }

@@ -25,11 +25,29 @@
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <div>
           <h2 class="text-xl font-semibold text-gray-900 mb-4">Dados do Autor</h2>
+          <div>
+            <Input
+              label="Nome completo"
+              v-model="form.autor_nome_completo"
+              placeholder="Ex: Cecília Aine da Silva"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Orientação</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input label="Nome Completo" v-model="form.autor_nome_completo" required />
-            <Input label="Sobrenome" v-model="form.autor_sobrenome" required />
-            <Input label="Nome sem Último Sobrenome" v-model="form.autor_nome_sem_ultimo_sobrenome" required />
-            <Input label="Último Sobrenome" v-model="form.autor_ultimo_sobrenome" required />
+            <Input
+              label="Nome completo do orientador"
+              v-model="form.orientador_nome_completo"
+              placeholder="Ex: Dra. Cecília Aine da Silva"
+            />
+            <Input
+              label="Nome completo do coorientador"
+              v-model="form.coorientador_nome_completo"
+              placeholder="Ex: Dr. João da Silva"
+            />
           </div>
         </div>
 
@@ -38,20 +56,58 @@
           <div class="space-y-4">
             <Input label="Título" v-model="form.titulo" required />
             <Input label="Subtítulo" v-model="form.subtitulo" />
-            <div class="grid grid-cols-3 gap-4">
-              <Input label="Dia" v-model="form.data_dia" placeholder="DD" required />
-              <Input label="Mês" v-model="form.data_mes" placeholder="MM" required />
-              <Input label="Ano" v-model="form.data_ano" placeholder="AAAA" required />
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Dia <span class="text-red-500">*</span></label>
+                <select v-model="form.data_dia" required :class="selectClass">
+                  <option value="">Dia</option>
+                  <option v-for="dia in dias" :key="dia" :value="dia">{{ dia }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mês <span class="text-red-500">*</span></label>
+                <select v-model="form.data_mes" required :class="selectClass">
+                  <option value="">Mês</option>
+                  <option v-for="mes in meses" :key="mes.value" :value="mes.value">{{ mes.label }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Ano <span class="text-red-500">*</span></label>
+                <select v-model="form.data_ano" required :class="selectClass">
+                  <option value="">Ano</option>
+                  <option v-for="ano in anos" :key="ano" :value="ano">{{ ano }}</option>
+                </select>
+              </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
               <Input label="Cidade" v-model="form.cidade" required />
               <Input label="Campus" v-model="form.campus" required />
             </div>
             <Input label="Programa" v-model="form.programa" required />
-            <Input label="Nível de Ensino" v-model="form.nivel_ensino" required />
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Nível de ensino <span class="text-red-500">*</span>
+              </label>
+              <select v-model="form.nivel_ensino" required :class="selectClass">
+                <option value="">Selecione o nível de ensino</option>
+                <option v-for="nivel in niveisEnsino" :key="nivel.value" :value="nivel.value">
+                  {{ nivel.label }}
+                </option>
+              </select>
+            </div>
             <Input label="Curso" v-model="form.curso" required />
             <Textarea label="Palavras-chave" v-model="form.palavras_chave" required />
-            <Input label="Tipo de Trabalho" v-model="form.tipo_trabalho" placeholder="Ex: TCC" required />
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Tipo de trabalho <span class="text-red-500">*</span>
+              </label>
+              <select v-model="form.tipo_trabalho" required :class="selectClass">
+                <option value="">Selecione o tipo de trabalho</option>
+                <option v-for="tipo in tiposTrabalho" :key="tipo.value" :value="tipo.value">
+                  {{ tipo.label }}
+                </option>
+              </select>
+            </div>
             
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -60,7 +116,7 @@
               <select
                 v-model="form.biblioteca_id"
                 required
-                class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+                :class="selectClass"
                 :disabled="loadingBibliotecas"
               >
                 <option value="">Selecione uma biblioteca</option>
@@ -136,15 +192,55 @@ import Input from '../components/UI/Input.vue'
 import Textarea from '../components/UI/Textarea.vue'
 import Button from '../components/UI/Button.vue'
 import api from '../services/api'
-import { notifyError, notifyInfo } from '../services/toast'
+import { notifyApiError, notifyError, notifyInfo } from '../services/toast'
 
 const router = useRouter()
 
+const selectClass = 'w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed'
+
+const niveisEnsino = [
+  { value: 'tecnico', label: 'Técnico' },
+  { value: 'graduacao', label: 'Graduação' },
+  { value: 'especializacao', label: 'Especialização' },
+  { value: 'mestrado', label: 'Mestrado' },
+  { value: 'doutorado', label: 'Doutorado' }
+]
+
+const tiposTrabalho = [
+  { value: 'tcc', label: 'TCC' },
+  { value: 'monografia', label: 'Monografia' },
+  { value: 'dissertacao', label: 'Dissertação' },
+  { value: 'tese', label: 'Tese' },
+  { value: 'artigo', label: 'Artigo' },
+  { value: 'anais', label: 'Anais' },
+  { value: 'livro_fisico', label: 'Livro físico' },
+  { value: 'ebook', label: 'E-book' },
+  { value: 'produto_educacional', label: 'Produto educacional' }
+]
+
+const meses = [
+  { value: '01', label: '01 - Janeiro' },
+  { value: '02', label: '02 - Fevereiro' },
+  { value: '03', label: '03 - Março' },
+  { value: '04', label: '04 - Abril' },
+  { value: '05', label: '05 - Maio' },
+  { value: '06', label: '06 - Junho' },
+  { value: '07', label: '07 - Julho' },
+  { value: '08', label: '08 - Agosto' },
+  { value: '09', label: '09 - Setembro' },
+  { value: '10', label: '10 - Outubro' },
+  { value: '11', label: '11 - Novembro' },
+  { value: '12', label: '12 - Dezembro' }
+]
+
+const dias = Array.from({ length: 31 }, (_, index) => String(index + 1).padStart(2, '0'))
+const anoAtual = new Date().getFullYear()
+const anos = Array.from({ length: anoAtual - 1948 }, (_, index) => String(anoAtual + 1 - index))
+
 const form = ref({
   autor_nome_completo: '',
-  autor_sobrenome: '',
-  autor_nome_sem_ultimo_sobrenome: '',
-  autor_ultimo_sobrenome: '',
+  orientador_nome_completo: '',
+  coorientador_nome_completo: '',
   titulo: '',
   subtitulo: '',
   data_dia: '',
@@ -234,7 +330,6 @@ const preencherDadosAleatorios = () => {
   const cidades = ['Natal', 'Mossoró', 'Caicó', 'Currais Novos', 'Pau dos Ferros']
   const campus = ['Natal - Central', 'Mossoró', 'Caicó', 'Currais Novos', 'Pau dos Ferros']
   const programas = ['Técnico em Informática', 'Técnico em Redes', 'Superior em Tecnologia']
-  const niveis = ['Técnico', 'Superior', 'Pós-graduação']
   const cursos = [
     'Técnico em Informática',
     'Técnico em Redes de Computadores',
@@ -250,32 +345,15 @@ const preencherDadosAleatorios = () => {
     'Software, Engenharia, Metodologias Ágeis'
   ]
   
-  const tiposTrabalho = ['TCC', 'Monografia', 'Dissertação', 'Tese']
-  
   const nomeCompleto = nomesCompletos[Math.floor(Math.random() * nomesCompletos.length)]
-  const partesNome = nomeCompleto.split(' ')
-  const ultimoSobrenome = partesNome[partesNome.length - 1]
-  const nomeSemUltimo = partesNome.slice(0, -1).join(' ')
-  const sobrenome = partesNome.slice(1).join(' ')
   
   const orientador = orientadores[Math.floor(Math.random() * orientadores.length)]
-  const partesOrientador = orientador.split(' ')
-  const orientadorSobrenome = partesOrientador.slice(-2).join(' ')
-  const orientadorNomeSemUltimo = partesOrientador.slice(1, -2).join(' ')
-  const orientadorUltimoSobrenome = partesOrientador[partesOrientador.length - 1]
   
   const coorientador = coorientadores[Math.floor(Math.random() * coorientadores.length)]
   let coorientadorNomeCompleto = null
-  let coorientadorSobrenome = null
-  let coorientadorNomeSemUltimo = null
-  let coorientadorUltimoSobrenome = null
   
   if (coorientador) {
     coorientadorNomeCompleto = coorientador
-    const partesCoorientador = coorientador.split(' ')
-    coorientadorSobrenome = partesCoorientador.slice(-2).join(' ')
-    coorientadorNomeSemUltimo = partesCoorientador.slice(1, -2).join(' ')
-    coorientadorUltimoSobrenome = partesCoorientador[partesCoorientador.length - 1]
   }
   
   const hoje = new Date()
@@ -285,17 +363,8 @@ const preencherDadosAleatorios = () => {
   
   form.value = {
     autor_nome_completo: nomeCompleto,
-    autor_sobrenome: sobrenome,
-    autor_nome_sem_ultimo_sobrenome: nomeSemUltimo,
-    autor_ultimo_sobrenome: ultimoSobrenome,
     orientador_nome_completo: orientador,
-    orientador_sobrenome: orientadorSobrenome,
-    orientador_nome_sem_ultimo_sobrenome: orientadorNomeSemUltimo,
-    orientador_ultimo_sobrenome: orientadorUltimoSobrenome,
     coorientador_nome_completo: coorientadorNomeCompleto,
-    coorientador_sobrenome: coorientadorSobrenome,
-    coorientador_nome_sem_ultimo_sobrenome: coorientadorNomeSemUltimo,
-    coorientador_ultimo_sobrenome: coorientadorUltimoSobrenome,
     titulo: titulos[Math.floor(Math.random() * titulos.length)],
     subtitulo: subtitulos[Math.floor(Math.random() * subtitulos.length)],
     data_dia: dia,
@@ -304,10 +373,10 @@ const preencherDadosAleatorios = () => {
     cidade: cidades[Math.floor(Math.random() * cidades.length)],
     campus: campus[Math.floor(Math.random() * campus.length)],
     programa: programas[Math.floor(Math.random() * programas.length)],
-    nivel_ensino: niveis[Math.floor(Math.random() * niveis.length)],
+    nivel_ensino: niveisEnsino[Math.floor(Math.random() * niveisEnsino.length)].value,
     curso: cursos[Math.floor(Math.random() * cursos.length)],
     palavras_chave: palavrasChave[Math.floor(Math.random() * palavrasChave.length)],
-    tipo_trabalho: tiposTrabalho[Math.floor(Math.random() * tiposTrabalho.length)],
+    tipo_trabalho: tiposTrabalho[Math.floor(Math.random() * tiposTrabalho.length)].value,
     biblioteca_id: bibliotecas.value.length > 0 ? bibliotecas.value[Math.floor(Math.random() * bibliotecas.value.length)].id : ''
   }
 }
@@ -345,8 +414,7 @@ const handleSubmit = async () => {
     
     router.push('/fichas')
   } catch (error) {
-    const errorMsg = error.response?.data?.detail || 'Erro ao criar ficha. Tente novamente.'
-    notifyError(errorMsg)
+    notifyApiError(error, 'Erro ao criar ficha. Verifique os dados e tente novamente.')
   } finally {
     loading.value = false
   }
