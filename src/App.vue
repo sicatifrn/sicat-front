@@ -37,7 +37,7 @@ const route = useRoute()
 
 const isInternalLayout = computed(() => route.meta.requiresAuth)
 
-const authRoutes = ['/login', '/register', '/recuperar-senha']
+const authRoutes = ['/login']
 
 const showFooter = computed(() => authRoutes.includes(route.path))
 

@@ -11,7 +11,7 @@ export const routerGuard = (to, from, next) => {
     next('/dashboard')
   } else if (requiresBibliotecario && userRole !== 'bibliotecario') {
     next('/dashboard')
-  } else if ((to.path === '/login' || to.path === '/register' || to.path === '/recuperar-senha') && token) {
+  } else if (to.path === '/login' && token) {
     next('/dashboard')
   } else {
     next()

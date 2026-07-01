@@ -2,17 +2,9 @@ import axios from 'axios'
 
 const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api'
 export const API_BASE_URL = rawApiBaseUrl.replace(/\/+$/, '')
-const SUAP_API_URL = 'https://suap.ifrn.edu.br/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
-
-const suapApi = axios.create({
-  baseURL: SUAP_API_URL,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -51,61 +43,7 @@ api.interceptors.response.use(
 )
 
 export const authAPI = {
-  login: async (matricula, senha) => {
-    const response = await api.post('/api/auth/login', {
-      matricula,
-      senha
-    })
-    return response.data
-  },
-
-  validateSuap: async (matricula, senha_suap) => {
-    try {
-      const tokenResponse = await suapApi.post('/token/pair', {
-        username: matricula,
-        password: senha_suap
-      })
-
-      const { access } = tokenResponse.data
-
-      const userResponse = await suapApi.get('/rh/eu/', {
-        headers: {
-          Authorization: `Bearer ${access}`
-        }
-      })
-
-      return {
-        valido: true,
-        token: access,
-        dados: userResponse.data
-      }
-    } catch (error) {
-      if (error.response?.status === 401) {
-        throw new Error('Credenciais do SUAP inválidas')
-      }
-      throw error
-    }
-  },
-
-  register: async (matricula, senha_suap, nova_senha, confirmar_senha) => {
-    const response = await api.post('/api/auth/registro', {
-      matricula,
-      senha_suap,
-      nova_senha,
-      confirmar_senha
-    })
-    return response.data
-  },
-
-  recuperarAcesso: async (matricula, senha_suap, nova_senha, confirmar_senha) => {
-    const response = await api.post('/api/auth/recuperar-acesso', {
-      matricula,
-      senha_suap,
-      nova_senha,
-      confirmar_senha
-    })
-    return response.data
-  },
+  getSuapLoginUrl: () => `${API_BASE_URL}/api/auth/suap/login`,
 
   getMe: async () => {
     const response = await api.get('/api/auth/perfil')

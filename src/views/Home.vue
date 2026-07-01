@@ -14,13 +14,7 @@
         <router-link to="/login" v-if="!isAuthenticated">
           <Button size="lg">
             <ion-icon name="log-in-outline"></ion-icon>
-            Entrar
-          </Button>
-        </router-link>
-        <router-link to="/register" v-if="!isAuthenticated">
-          <Button variant="outline" size="lg">
-            <ion-icon name="person-add-outline"></ion-icon>
-            Criar Conta
+            Acessar com SUAP
           </Button>
         </router-link>
         <router-link to="/dashboard" v-if="isAuthenticated">

@@ -93,18 +93,6 @@
         </div>
         <div v-else class="flex items-center gap-2 flex-shrink-0">
           <AccessibilityToggle />
-          <router-link to="/register" custom v-slot="{ navigate, isActive }">
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              class="flex-shrink-0 whitespace-nowrap"
-              :class="isActive ? navActiveClass : ''"
-              @click="navigate"
-            >
-              Criar conta
-            </Button>
-          </router-link>
           <router-link to="/login" custom v-slot="{ navigate, isActive }">
             <Button
               type="button"
@@ -114,7 +102,7 @@
               :class="isActive ? navActiveClass : ''"
               @click="navigate"
             >
-              Entrar
+              Acessar com SUAP
             </Button>
           </router-link>
         </div>
