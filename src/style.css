@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* Paleta: céu pastel (primário), azul-acinzentado (secundário), creme (fundo) */
 @theme {
   --color-brand-50: #eef6fb;
   --color-brand-100: #d9ebf5;
