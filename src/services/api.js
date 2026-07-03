@@ -1,8 +1,12 @@
 import axios from 'axios'
 
 // Vazio = mesma origem (o nginx do frontend faz proxy de /api para o backend).
+// As rotas abaixo já incluem o prefixo /api, então removemos um /api final
+// da base (ex.: VITE_API_BASE_URL=/api) para não gerar /api/api.
 const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? ''
-export const API_BASE_URL = rawApiBaseUrl.replace(/\/+$/, '')
+export const API_BASE_URL = rawApiBaseUrl
+  .replace(/\/+$/, '')
+  .replace(/\/api$/, '')
 
 const api = axios.create({
   baseURL: API_BASE_URL,
