@@ -108,3 +108,10 @@ html.high-contrast textarea::placeholder {
 html.high-contrast img {
   filter: contrast(1.2);
 }
+
+/* Logo: o texto "SICAT" é escuro e some no fundo preto do alto contraste.
+   Recolore para amarelo (mesma cor de destaque do tema) para ficar legível. */
+html.high-contrast img[src*="logo"] {
+  filter: brightness(0) saturate(100%) invert(84%) sepia(31%) saturate(748%)
+    hue-rotate(357deg) brightness(103%) contrast(103%) !important;
+}
