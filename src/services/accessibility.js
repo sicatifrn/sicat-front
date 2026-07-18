@@ -2,6 +2,9 @@ const HIGH_CONTRAST_KEY = 'sicat_high_contrast'
 
 export const isHighContrastEnabled = () => localStorage.getItem(HIGH_CONTRAST_KEY) === 'true'
 
+export const getLogoSrc = (highContrast = isHighContrastEnabled()) =>
+  highContrast ? '/logo-high-contrast.svg' : '/logo.svg'
+
 export const applyHighContrast = (enabled = isHighContrastEnabled()) => {
   document.documentElement.classList.toggle('high-contrast', enabled)
 }

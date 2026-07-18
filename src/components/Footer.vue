@@ -9,7 +9,7 @@
         >
           <div class="flex items-center justify-center sm:justify-start min-w-0">
             <img
-              src="/logo.svg"
+              :src="logoSrc"
               alt="SICAT"
               class="h-8 sm:h-9 w-auto max-w-[min(16rem,90vw)] object-contain object-center sm:object-left shrink-0"
               width="200"
@@ -31,4 +31,24 @@
     </div>
   </footer>
 </template>
+
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import { getLogoSrc, isHighContrastEnabled } from '../services/accessibility'
+
+const logoSrc = ref(getLogoSrc())
+
+const handleAccessibilityChange = (event) => {
+  logoSrc.value = getLogoSrc(!!event.detail?.highContrast)
+}
+
+onMounted(() => {
+  logoSrc.value = getLogoSrc(isHighContrastEnabled())
+  window.addEventListener('accessibility-changed', handleAccessibilityChange)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('accessibility-changed', handleAccessibilityChange)
+})
+</script>
 

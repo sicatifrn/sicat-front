@@ -8,7 +8,7 @@
             class="flex items-center flex-shrink-0 min-w-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-50"
           >
             <img
-              src="/logo.svg"
+              :src="logoSrc"
               alt="SICAT — início"
               class="h-7 sm:h-9 w-auto max-w-[min(14rem,55vw)] object-contain object-left shrink-0"
               width="180"
@@ -116,6 +116,7 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AccessibilityToggle from './AccessibilityToggle.vue'
 import Button from './UI/Button.vue'
+import { getLogoSrc, isHighContrastEnabled } from '../services/accessibility'
 
 const route = useRoute()
 
@@ -125,6 +126,7 @@ const navActiveClass =
 const isAuthenticated = ref(!!localStorage.getItem('access_token'))
 const userRole = ref(localStorage.getItem('user_role') || '')
 const userNome = ref('')
+const logoSrc = ref(getLogoSrc())
 
 const atualizarEstado = () => {
   isAuthenticated.value = !!localStorage.getItem('access_token')
@@ -143,18 +145,25 @@ const handleAuthChange = () => {
   atualizarEstado()
 }
 
+const handleAccessibilityChange = (event) => {
+  logoSrc.value = getLogoSrc(!!event.detail?.highContrast)
+}
+
 watch(() => route.path, () => {
   atualizarEstado()
 }, { immediate: true })
 
 onMounted(() => {
   atualizarEstado()
+  logoSrc.value = getLogoSrc(isHighContrastEnabled())
   window.addEventListener('storage', handleStorageChange)
   window.addEventListener('auth-changed', handleAuthChange)
+  window.addEventListener('accessibility-changed', handleAccessibilityChange)
 })
 
 onUnmounted(() => {
   window.removeEventListener('storage', handleStorageChange)
   window.removeEventListener('auth-changed', handleAuthChange)
+  window.removeEventListener('accessibility-changed', handleAccessibilityChange)
 })
 </script>
